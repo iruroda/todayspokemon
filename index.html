@@ -27,11 +27,12 @@
   .shead{font-size:14px;font-weight:700;color:var(--accent);padding:16px 12px 6px;display:flex;justify-content:space-between;align-items:baseline}
   .shead small{color:var(--sub);font-weight:400;font-size:11px}
   .sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:0 10px}
-  .cell{position:relative;background:var(--card);border-radius:10px;padding:4px 2px 2px;text-align:center;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;justify-content:center;align-items:center}
-  .cell img{width:100%;max-width:72px;aspect-ratio:68/56;object-fit:contain;image-rendering:pixelated;pointer-events:none;-webkit-user-drag:none}
+  .cell{position:relative;background:var(--card);border-radius:10px;padding:4px 2px 2px;text-align:center;user-select:none;-webkit-user-select:none}
+  .cell .sp{display:block;width:100%;max-width:72px;aspect-ratio:68/56;visibility:hidden;margin:0 auto}
+  .cell img{position:absolute;left:2px;right:2px;margin:0 auto;max-width:72px;aspect-ratio:68/56;object-fit:contain;image-rendering:pixelated;pointer-events:none;-webkit-user-drag:none;top:4px}
+  .cell:not(.done) img{top:50%;transform:translateY(-50%)}
   body.shadow .cell:not(.done) img{filter:brightness(0) invert(.85)}
   .cell .nm{display:block;width:100%;font-size:9px;color:transparent;height:12px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-  .cell:not(.done) .nm{height:0}
   .cell .fi{position:absolute;top:2px;right:4px;font-size:9px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.7);pointer-events:none;line-height:1}
   .cell.done img{filter:none;animation:pop .35s}
   .cell.done .nm{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.7)}
@@ -122,7 +123,7 @@ if(lookup["폴리곤2"]!==undefined){lookup["폴리곤이"]=lookup["폴리곤2"]
 if(lookup["폴리곤z"]!==undefined){lookup["폴리곤제트"]=lookup["폴리곤z"];}
 var cellsByBase={},visCells=[],allCells=[],curTotal=0;
 function curFrame(c){var e=c._e;return cfg.fc?tick%e[5].length:(c._frame||0)}
-function updateFI(c){if(c._e[5].length>1)c._fi.textContent=(curFrame(c)+1)+"/"+c._e[5].length}
+function updateFI(c){if(c._e[5].length<=1)return;c._fi.textContent=(curFrame(c)+1)+"/"+c._e[5].length;c._fi.style.display=(c.classList.contains("done")||cfg.sil||cfg.typ)?"":"none"}
 function typeBg(c){
   var e=c._e,t1=e[2],t2=e[3];
   if(e[6]){var f=e[6][curFrame(c)]||e[6][0];t1=f[0];t2=f[1];}
@@ -136,10 +137,11 @@ function srcFor(c){
 }
 function makeCell(e,i){
   var cell=document.createElement("div");cell.className="cell";
+  var sp=document.createElement("span");sp.className="sp";
   var img=document.createElement("img");img.loading="lazy";img.alt="?";
   var nm=document.createElement("span");nm.className="nm";nm.textContent=e[0];
   var fi=document.createElement("span");fi.className="fi";
-  cell.appendChild(img);cell.appendChild(nm);cell.appendChild(fi);
+  cell.appendChild(sp);cell.appendChild(img);cell.appendChild(nm);cell.appendChild(fi);
   cell._e=e; cell._img=img; cell._fi=fi; cell._frame=0;
   if(found.has(e[1])){cell.classList.add("done");cell.style.background=typeBg(cell);}
   else if(cfg.typ){cell.style.background=typeBg(cell);}
@@ -185,7 +187,7 @@ function save(){localStorage.setItem("psq2",JSON.stringify(Array.from(found)))}
 function refreshImgs(){allCells.forEach(function(c){c._img.src=srcFor(c)});visCells.forEach(updateFI)}
 function refreshBgs(){allCells.forEach(function(c){if(c.classList.contains("done"))c.style.background=typeBg(c);else c.style.background=cfg.typ?typeBg(c):""})}
 function applySil(){document.body.classList.toggle("shadow",cfg.sil);refreshImgs()}
-function applyTyp(){allCells.forEach(function(c){if(!c.classList.contains("done"))c.style.background=cfg.typ?typeBg(c):""})}
+function applyTyp(){allCells.forEach(function(c){if(!c.classList.contains("done"))c.style.background=cfg.typ?typeBg(c):""});visCells.forEach(updateFI)}
 var clearGuard=false;
 function checkInput(){
   var inp0=$("answer");
@@ -195,7 +197,7 @@ function checkInput(){
   var b=lookup[key];
   if(b!==undefined&&!found.has(b)&&(cellsByBase[b]||[]).length){
     found.add(b);save();
-    (cellsByBase[b]||[]).forEach(function(c){c.classList.add("done");c.style.background=typeBg(c);c._img.src=srcFor(c);});
+    (cellsByBase[b]||[]).forEach(function(c){c.classList.add("done");c.style.background=typeBg(c);c._img.src=srcFor(c);if(c._e[5].length>1)updateFI(c);});
     var first=(cellsByBase[b]||[])[0];
     if(first){
       var r=first.getBoundingClientRect(),tb=$("topbar").offsetHeight;
@@ -244,6 +246,7 @@ $("sections").addEventListener("click",function(ev){
         c.classList.remove("done");
         c.style.background=cfg.typ?typeBg(c):"";
         c._img.src=srcFor(c);
+        if(c._e[5].length>1)updateFI(c);
       });
       render2counts();
     }else{
@@ -256,7 +259,7 @@ $("menubtn").onclick=function(){$("menu").style.display="block"};
 $("mclose").onclick=function(){$("menu").style.display="none"};
 $("menu").onclick=function(e){if(e.target===$("menu"))$("menu").style.display="none"};
 $("resetbtn").onclick=function(){
-  if(!confirm("맞춘 기록을 전부 지우고 처음부터 할까?"))return;
+  if(!confirm("지금까지 발견한 포켓몬의 기록을 전부 지울까요?"))return;
   found=new Set();save();render();$("menu").style.display="none";
 };
 function chip(label,on,fn,parent){
