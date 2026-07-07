@@ -541,7 +541,7 @@ function checkInput(){
       window.scrollTo({top:window.scrollY+r.top-tb-12,behavior:"smooth"});
     }
     var inp=$("answer");
-    if(!("ontouchstart" in window)){inp.blur();inp.value="";inp.focus();}
+    if(!("ontouchstart" in window)){inp.blur();inp.value="";setTimeout(function(){inp.value="";inp.focus();inp.value="";},0);}
     else inp.value="";
     clearGuard=true;
     if(clearGuardTimer)clearTimeout(clearGuardTimer);
