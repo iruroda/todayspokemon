@@ -32,6 +32,7 @@
   @keyframes flash{0%{border-color:#5dd88a;background:#2e4a3a}100%{border-color:var(--accent)}}
   .shead{font-size:14px;font-weight:700;color:var(--accent);padding:16px 12px 6px;display:flex;justify-content:space-between;align-items:baseline}
   .shead small{color:var(--sub);font-weight:400;font-size:11px}
+  .novar{margin:18px 14px;padding:14px 12px;border:2px solid #e53e4e;background:#ffd9e4;color:#b3122a;border-radius:10px;font-size:13px;font-weight:600;text-align:center;line-height:1.5}
   .sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:0 10px}
   .cell{position:relative;background:var(--card);border-radius:10px;padding:4px 2px 2px;text-align:center;user-select:none;-webkit-user-select:none}
   .cell .sp{display:block;width:100%;max-width:72px;aspect-ratio:68/56;visibility:hidden;margin:0 auto}
@@ -438,6 +439,18 @@ function render(){
     root.appendChild(h);root.appendChild(gr);
   });
   tot=Object.keys(SP).length;fnd=Object.keys(SPF).length;
+  if(allCells.length===0&&selB.size&&cfg.dexIdx!==19){
+    var vbox={6:1,7:1,15:1,11:1};
+    var onlyVar=Array.from(selB).every(function(b){return vbox[b]});
+    var megaCause=[6,7,15].some(function(b){return selB.has(b)})&&!cfg.mega;
+    var gmaxCause=selB.has(11)&&!cfg.gmax;
+    if(onlyVar&&(megaCause||gmaxCause)){
+      var w=megaCause&&gmaxCause?"거다이맥스(메가진화)":(gmaxCause?"거다이맥스":"메가진화");
+      var nv=document.createElement("div");nv.className="novar";
+      nv.textContent=w+" 따로 보기 토글이 꺼진 상태에서는 "+w+" 포켓몬만 볼 수 없습니다.";
+      root.appendChild(nv);
+    }
+  }
   curTotal=tot;
   $("pnum").textContent=fnd;$("ptotal").textContent=tot;
   $("pfill").style.width=(tot?fnd/tot*100:0)+"%";
