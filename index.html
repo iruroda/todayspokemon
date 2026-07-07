@@ -173,7 +173,7 @@ var DEXDEF=[
   ["호연도감",function(e){return true}],
   ["신오도감",function(e){return true}],
   ["하나도감",function(e){return true}],
-  ["센트럴칼로스도감",function(e){return true}],
+  ["칼로스도감",function(e){return true}],
   ["코스트칼로스도감",function(e){return true}],
   ["마운틴칼로스도감",function(e){return true}],
   ["알로라도감",function(e){return true}],
@@ -254,7 +254,7 @@ var stats=loadStats();
 var cfg;try{cfg=JSON.parse(localStorage.getItem("psq2cfg")||"{}")}catch(e){cfg={}}
 cfg.sil=!!cfg.sil;cfg.typ=!!cfg.typ;cfg.fc=("fc" in cfg)?!!cfg.fc:true;cfg.cols=[3,4,5,6].indexOf(cfg.cols)>=0?cfg.cols:4;
 cfg.gmax=!!cfg.gmax;cfg.regional=!!cfg.regional;cfg.mega=!!cfg.mega;
-cfg.dexIdx=(typeof cfg.dexIdx==="number"&&cfg.dexIdx>=0&&cfg.dexIdx<20)?cfg.dexIdx:0;
+cfg.dexIdx=(typeof cfg.dexIdx==="number"&&cfg.dexIdx>=0&&cfg.dexIdx<20)?cfg.dexIdx:0;if(cfg.dexIdx===7||cfg.dexIdx===8)cfg.dexIdx=6;
 cfg.fillOrder=(cfg.fillOrder===1||cfg.fillOrder===2)?cfg.fillOrder:0;
 cfg.collapsed=(cfg.collapsed&&typeof cfg.collapsed==="object")?cfg.collapsed:{};
 var selB=new Set(cfg.b||[]),selT=new Set(cfg.t||[]),selF=cfg.f||0;
@@ -329,6 +329,7 @@ var cellsByBase={},visCells=[],allCells=[],curTotal=0,dexNumMap={},fillTarget=nu
 function isMegaOrGmax(e){var nm=e[0];if(nm==="원시그란돈"||nm==="원시가이오가")return true;return nm.indexOf("거다이맥스 ")===0||isMegaName(nm)}
 function buildDexNumMap(){
   dexNumMap={};
+  if(cfg.dexIdx===6){[6,7,8].forEach(function(k){DEXORDER[k].forEach(function(dn,idx){dexNumMap[dn]=idx+1})});return;}
   var order=DEXORDER[cfg.dexIdx];
   if(order){
     var nb=cfg.dexIdx===5?0:1;order.forEach(function(dn,idx){dexNumMap[dn]=idx+nb});
@@ -392,6 +393,22 @@ function render(){
     });
     mlist.sort(function(a,b){return MEGA_DEXNO[a[0][0]]-MEGA_DEXNO[b[0][0]]});
     if(mlist.length)groups.push([DEXDEF[19][0],mlist]);
+  }else if(cfg.dexIdx===6){
+    [[6,"센트럴칼로스도감"],[7,"코스트칼로스도감"],[8,"마운틴칼로스도감"]].forEach(function(ks){
+      var opos={};DEXORDER[ks[0]].forEach(function(dn,idx){opos[dn]=idx});
+      var list=DATA.map(function(e,i){return [e,i]}).filter(function(p){
+        var e=p[0],i=p[1];
+        if(VARIDX[i]&&!cfg[VARIDX[i].cat])return false;
+        if(!(e[1] in opos))return false;
+        if(selB.size&&!selB.has(mb(e[4])))return false;
+        if(selT.size&&!(selT.has(e[2])||(e[3]>=0&&selT.has(e[3]))))return false;
+        if(selF===1&&!found.has(e[1]))return false;
+        if(selF===2&&found.has(e[1]))return false;
+        return true;
+      });
+      list.sort(function(a,b){return opos[a[0][1]]-opos[b[0][1]]});
+      if(list.length)groups.push([ks[1],list]);
+    });
   }else if(order){
     var opos={};order.forEach(function(dn,idx){opos[dn]=idx});
     var list=DATA.map(function(e,i){return [e,i]}).filter(function(p){
@@ -523,7 +540,9 @@ function checkInput(){
       var r=first.getBoundingClientRect(),tb=$("topbar").offsetHeight;
       window.scrollTo({top:window.scrollY+r.top-tb-12,behavior:"smooth"});
     }
-    var inp=$("answer");inp.value="";
+    var inp=$("answer");
+    if(!("ontouchstart" in window)){inp.blur();inp.value="";inp.focus();}
+    else inp.value="";
     clearGuard=true;
     if(clearGuardTimer)clearTimeout(clearGuardTimer);
     clearGuardTimer=setTimeout(function(){clearGuard=false;clearGuardTimer=null},800);
@@ -779,6 +798,7 @@ function buildMenu(){
   chip("메가진화 따로 보기",cfg.mega,function(){cfg.mega=!cfg.mega;saveCfg();applyVariants();render();buildMenu()},sc);
   var dc=$("dexchips");dc.innerHTML="";
   DEXDEF.forEach(function(d,di){
+    if(di===7||di===8)return;
     chip(d[0],cfg.dexIdx===di,function(){cfg.dexIdx=di;saveCfg();render();buildMenu()},dc);
   });
   var bc=$("boxchips");bc.innerHTML="";
