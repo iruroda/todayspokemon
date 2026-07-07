@@ -706,7 +706,7 @@ function syncFromServer(){
   return fbDb.collection("users").doc(fbUid).get().then(function(snap){
     var d=snap.exists?snap.data():{};
     if(!curUser&&d.name){curUser=d.name;localStorage.setItem("psq2curuser",d.name)}
-    (Array.isArray(d.found)?d.found:[]).forEach(function(n){if(typeof n==="number")found.add(n)});
+    found=new Set();(Array.isArray(d.found)?d.found:[]).forEach(function(n){if(typeof n==="number")found.add(n)});
     localStorage.setItem("psq2",JSON.stringify(Array.from(found)));
     var s=(d.stats&&typeof d.stats==="object")?d.stats:null;
     if(s){
