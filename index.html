@@ -540,12 +540,16 @@ function checkInput(){
       var r=first.getBoundingClientRect(),tb=$("topbar").offsetHeight;
       window.scrollTo({top:window.scrollY+r.top-tb-12,behavior:"smooth"});
     }
-    var inp=$("answer"),tl=inp.value.slice(-1);
-    if(!("ontouchstart" in window)){inp.blur();inp.value="";setTimeout(function(){if(inp.value===tl)inp.value="";inp.focus();},0);}
-    else inp.value="";
-    clearGuard=true;
-    if(clearGuardTimer)clearTimeout(clearGuardTimer);
-    clearGuardTimer=setTimeout(function(){clearGuard=false;clearGuardTimer=null},800);
+    var inp=$("answer");
+    if(!("ontouchstart" in window)){
+      var n=inp.cloneNode(false);n.value="";n.classList.remove("correct");
+      inp.parentNode.replaceChild(n,inp);bindAnswer(n);n.focus();inp=n;
+    }else{
+      inp.value="";
+      clearGuard=true;
+      if(clearGuardTimer)clearTimeout(clearGuardTimer);
+      clearGuardTimer=setTimeout(function(){clearGuard=false;clearGuardTimer=null},800);
+    }
     inp.classList.remove("correct");void inp.offsetWidth;inp.classList.add("correct");
     render2counts();
     updateFillHighlight();
@@ -580,10 +584,13 @@ function render2counts(){
   $("pnum").textContent=fnd;
   $("pfill").style.width=(curTotal?fnd/curTotal*100:0)+"%";
 }
-$("answer").addEventListener("input",checkInput);
-$("answer").addEventListener("keydown",function(e){if(e.key==="Enter")checkInput()});
-$("answer").addEventListener("compositionend",function(){if(clearGuard)this.value=""});
-$("answer").addEventListener("compositionstart",function(){clearGuard=false;if(clearGuardTimer){clearTimeout(clearGuardTimer);clearGuardTimer=null}});
+function bindAnswer(inp){
+  inp.addEventListener("input",checkInput);
+  inp.addEventListener("keydown",function(e){if(e.key==="Enter")checkInput()});
+  inp.addEventListener("compositionend",function(){if(clearGuard)this.value=""});
+  inp.addEventListener("compositionstart",function(){clearGuard=false;if(clearGuardTimer){clearTimeout(clearGuardTimer);clearGuardTimer=null}});
+}
+bindAnswer($("answer"));
 var lastTapCell=null,lastTapT=0;
 var LONG_PRESS_MS=1500;
 var pressTimer=null,longPressFired=false;

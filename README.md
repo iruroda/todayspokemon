@@ -45,7 +45,7 @@
 11. **토글 라벨 변경** — "스트라이프 릴" → "모습 자동 전환" (cfg.fc).
 12. **기록 보호 확인창** — 실루엣 보기/타입 미리 보기 토글을 켤 때, 현재 기록이 깨끗하면(stats.sil/typ이 false) "OO 설정은 기록에 영향을 줍니다. 그래도 켜시겠습니까?" confirm 표시. 이미 사용한 기록이면 확인 없이 켜짐. 끌 때는 항상 확인 없음.
 
-13. **PC IME 잔여 글자 수정** — 정답 처리 시 비터치 환경에서는 `blur()→value=""→focus()`로 조합을 강제 종료 후 비움. 기존 clearGuard는 compositionstart에서 해제돼 Windows IME 재삽입을 못 막았음. 모바일(ontouchstart 있음)은 기존 방식 유지. 이후 보완: 0ms 지연 청소가 빠른 타자의 첫 글자를 지우던 문제 → 지연 청소는 입력값이 "방금 맞힌 이름의 마지막 글자"와 일치할 때만 실행.
+13. **PC IME 잔여 글자 수정 (최종: 입력칸 교체 방식)** — blur/focus·지연 청소·clearGuard 기반 시도들은 Windows IME가 blur 후에도 조합 세션을 유지해 compositionstart가 새로 안 울리는 탓에 실패(가드가 다음 첫 글자까지 지움, 예: 코스모그→코스모움). 최종 해법: 정답 처리 시 비터치 환경에서는 `#answer`를 `cloneNode(false)`로 새 원소로 교체 후 `bindAnswer()` 재바인딩·focus. IME 조합 상태가 원소에 붙어 있어 교체로 원천 차단. 리스너는 `bindAnswer(inp)` 함수로 묶음. 모바일은 기존 value="" + clearGuard 방식 유지.
 
 ### 최근 변경 (2026-07-07 · 1차)
 
