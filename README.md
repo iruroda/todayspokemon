@@ -36,6 +36,14 @@
 
 7. **로그인 동기화를 합집합→서버 우선으로 변경** — 기존 syncFromServer()는 서버 found를 로컬에 add(합집합)해서, 비로그인 상태로 맞춘 기록이 로그인 시 서버에 합쳐졌음. 이제 `found=new Set()`으로 비운 뒤 서버 목록만 반영 → 로그인하면 비로그인 진행분은 무효. 주의: 로그인 중 push 실패(오프라인)分은 다음 동기화 때 사라질 수 있고, 페이지 로드~auth 콜백 사이(<1초)의 정답도 서버 기준으로 덮임.
 
+8. **자동완성 오작동 수정** — 정답 입력칸이 브라우저 비밀번호 관리자에 아이디칸으로 오인되던 문제. #answer를 `type="search"`로 변경(+webkit 검색 UI 제거 CSS), loginId/loginPw에 `autocomplete="username"/"current-password"` 지정.
+9. **파비콘 복구** — JS가 덮어쓰는 favico base64가 잘린 PNG(IEND 없음)였음. 원본 monsterball.png(118×120)로 재생성.
+10. **순수 기록 보호** — syncFromServer()에서 서버 stats에 사용 이력이 없는데 cfg.sil/cfg.typ가 켜져 있으면 자동으로 끔(saveCfg+buildMenu). 이력 있으면 유지. cfg는 그 외 로그인과 무관하게 로컬 유지.
+
+8. **입력칸 자동완성 오인 수정** — #answer를 `type="search"`로 변경(+webkit 검색 UI 제거 CSS), 로그인 필드에 `autocomplete="username"/"current-password"` 지정. 브라우저 비밀번호 관리자가 정답 입력칸을 아이디 칸으로 착각하던 문제.
+9. **파비콘 복구** — JS가 favico를 덮어쓰는 base64가 monsterball.png 앞 31074/32605바이트로 잘려 있던 것(IEND 없음)을 원본 파일로 재생성.
+10. **순수 기록 보호** — syncFromServer()에서 서버 stats가 깨끗한 항목(sil/typ 미사용)인데 해당 토글이 켜져 있으면 자동으로 꺼서(saveCfg+buildMenu) 새로고침 시 기록 오염 방지. 서버에 이미 사용 기록이 있으면 토글 유지. cfg(토글)는 여전히 localStorage 전용, 서버 미저장.
+
 ### 최근 변경 (2026-07-07 · 1차)
 
 1. **도감별 필터 구성·카운터 버그 수정**
