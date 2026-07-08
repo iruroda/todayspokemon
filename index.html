@@ -34,6 +34,9 @@
   @keyframes flash{0%{border-color:#5dd88a;background:#2e4a3a}100%{border-color:var(--accent)}}
   .shead{font-size:14px;font-weight:700;color:var(--accent);padding:16px 12px 6px;display:flex;justify-content:space-between;align-items:baseline}
   .shead small{color:var(--sub);font-weight:400;font-size:11px}
+  .dexver{margin-left:8px;display:inline-flex;gap:4px;vertical-align:1px}
+  .dvbtn{background:var(--card);border:1px solid #3a3e50;color:var(--sub);border-radius:10px;padding:2px 8px;font-size:11px;font-weight:400;cursor:pointer;line-height:1.3}
+  .dvbtn.on{border-color:var(--accent);color:var(--accent);font-weight:700}
   .novar{margin:18px 14px;padding:14px 12px;border:2px solid #e53e4e;background:#ffd9e4;color:#b3122a;border-radius:10px;font-size:13px;font-weight:600;text-align:center;line-height:1.5}
   .sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:0 10px}
   .cell{position:relative;background:var(--card);border-radius:10px;padding:4px 2px 2px;text-align:center;user-select:none;-webkit-user-select:none}
@@ -326,12 +329,29 @@ DATA.forEach(function(e,i){
 if(lookup["폴리곤2"]!==undefined){lookup["폴리곤이"]=lookup["폴리곤2"];lookup["폴리곤투"]=lookup["폴리곤2"];}
 if(lookup["폴리곤z"]!==undefined){lookup["폴리곤제트"]=lookup["폴리곤z"];}
 var cellsByBase={},visCells=[],allCells=[],curTotal=0,dexNumMap={},fillTarget=null;
+var dexVer=0;
+var DEXVERS={1:["RG","LGPE"],2:["GS","HGSS"],3:["RS","ORAS"],4:["DP","Pt"],5:["BW","B2W2"],9:["SM","USUM"]};
+var BW_ORDER=(function(){var a=[],i;for(i=493;i<=648;i++)a.push(i);return a})();
+var SM_ORDER=[721,722,723,724,725,726,727,728,729,730,731,732,733,734,18,19,9,10,11,164,165,166,167,171,24,25,735,736,737,437,184,439,112,241,445,142,78,79,198,277,278,62,63,64,51,52,80,81,461,87,88,57,58,95,96,295,296,234,738,739,91,92,93,424,425,199,428,40,41,168,49,50,20,21,626,627,628,629,55,56,224,740,741,742,547,548,545,546,53,54,128,129,338,339,65,66,67,523,524,525,702,301,743,744,326,71,72,455,456,745,369,221,746,747,89,90,370,371,372,505,506,507,132,133,134,135,195,196,469,470,699,748,749,173,38,39,127,240,282,283,750,751,752,753,754,755,45,46,59,60,61,185,117,118,348,349,593,660,661,662,756,757,103,104,114,239,125,466,758,759,760,761,762,763,126,764,765,703,704,705,350,766,767,119,120,768,769,407,408,409,410,565,566,563,564,707,708,298,475,770,169,170,771,772,717,567,568,226,131,172,34,35,773,373,374,375,136,232,473,673,674,774,323,775,776,238,124,465,73,74,75,550,551,552,327,328,329,442,443,444,706,777,778,779,358,360,361,477,214,460,26,27,36,37,581,582,583,208,209,421,422,368,780,317,318,319,320,130,101,102,781,782,783,586,122,211,197,429,446,447,146,147,148,141,784,785,786,787,788,789,790,791,792,793,794,795,796,797,798,799,800,801];
+var JOHTO_GS_EXCL={423:1,462:1,464:1,468:1,472:1};
+var HOENN_RS_EXCL={405:1,406:1,432:1,461:1,463:1,474:1,475:1,476:1,477:1};
+function verOrder(o){
+  if(!DEXVERS[cfg.dexIdx]||dexVer!==0)return o;
+  if(cfg.dexIdx===1)return o.slice(0,151);
+  if(cfg.dexIdx===2)return o.filter(function(dn){return !JOHTO_GS_EXCL[dn]});
+  if(cfg.dexIdx===3)return o.filter(function(dn){return !HOENN_RS_EXCL[dn]});
+  if(cfg.dexIdx===4)return o.slice(0,151);
+  if(cfg.dexIdx===5)return BW_ORDER;
+  if(cfg.dexIdx===9)return SM_ORDER;
+  return o;
+}
 function isMegaOrGmax(e){var nm=e[0];if(nm==="원시그란돈"||nm==="원시가이오가")return true;return nm.indexOf("거다이맥스 ")===0||isMegaName(nm)}
 function buildDexNumMap(){
   dexNumMap={};
   if(cfg.dexIdx===6){[6,7,8].forEach(function(k){DEXORDER[k].forEach(function(dn,idx){dexNumMap[dn]=idx+1})});return;}
   var order=DEXORDER[cfg.dexIdx];
   if(order){
+    order=verOrder(order);
     var nb=cfg.dexIdx===5?0:1;order.forEach(function(dn,idx){dexNumMap[dn]=idx+nb});
     return;
   }
@@ -410,7 +430,7 @@ function render(){
       if(list.length)groups.push([ks[1],list]);
     });
   }else if(order){
-    var opos={};order.forEach(function(dn,idx){opos[dn]=idx});
+    var opos={};verOrder(order).forEach(function(dn,idx){opos[dn]=idx});
     var list=DATA.map(function(e,i){return [e,i]}).filter(function(p){
       var e=p[0],i=p[1];
       if(VARIDX[i]&&!cfg[VARIDX[i].cat])return false;
@@ -453,6 +473,12 @@ function render(){
     }
     var h=document.createElement("div");h.className="shead";
     h.innerHTML="<span>"+g[0]+"</span><small>"+got+" / "+totg+"</small>";
+    if(DEXVERS[cfg.dexIdx]){
+      var vh='<span class="dexver">';
+      DEXVERS[cfg.dexIdx].forEach(function(nm,vi){vh+='<button type="button" class="dvbtn'+(dexVer===vi?' on':'')+'">'+nm+'</button>'});
+      h.querySelector("span").insertAdjacentHTML("beforeend",vh+'</span>');
+      h.querySelectorAll(".dvbtn").forEach(function(b,vi){b.onclick=function(){if(dexVer===vi)return;dexVer=vi;render()}});
+    }
     var gr=document.createElement("div");gr.className="sgrid";
     g[1].forEach(function(p){gr.appendChild(makeCell(p[0],p[1]))});
     root.appendChild(h);root.appendChild(gr);
@@ -678,7 +704,7 @@ function renderRecords(){
   if(!stats.records.length){el.innerHTML='<div class="empty">아직 기록이 없습니다</div>';return}
   stats.records.forEach(function(r){
     var row=document.createElement("div");row.className="rec";
-    row.innerHTML='<div class="t">'+fmtTs(r.ts)+'</div><div class="s">실루엣 '+(r.sil?"O":"X")+" · 타입 미리보기 "+(r.typ?"O":"X")+" · 힌트 "+r.hint+"회 · 길게보기 "+r.longpress+"회</div>";
+    row.innerHTML='<div class="t">'+fmtTs(r.ts)+'</div><div class="s">실루엣 '+(r.sil?"O":"X")+" · 타입 미리 보기 "+(r.typ?"O":"X")+" · 힌트 "+r.hint+"회 · 이름 보기 "+r.longpress+"회</div>";
     el.appendChild(row);
   });
 }
@@ -806,7 +832,7 @@ function buildMenu(){
   var dc=$("dexchips");dc.innerHTML="";
   DEXDEF.forEach(function(d,di){
     if(di===7||di===8)return;
-    chip(d[0],cfg.dexIdx===di,function(){cfg.dexIdx=di;saveCfg();render();buildMenu()},dc);
+    chip(d[0],cfg.dexIdx===di,function(){cfg.dexIdx=di;dexVer=0;saveCfg();render();buildMenu()},dc);
   });
   var bc=$("boxchips");bc.innerHTML="";
   chip("전체",selB.size===0,function(){selB.clear();saveCfg();render();buildMenu()},bc);
