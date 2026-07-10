@@ -26,11 +26,14 @@
   #pfill{height:100%;width:0%;background:var(--accent);border-radius:3px;transition:width .3s}
   #typerow .tic.on{visibility:visible}
   #menubtn{background:var(--card);border:1px solid #3a3e50;color:var(--text);border-radius:10px;padding:7px 12px;font-size:16px;cursor:pointer}
-  #answer{width:100%;background:var(--card);border:1.5px solid #3a3e50;border-radius:12px;color:var(--text);font-size:17px;padding:11px 14px;outline:none}
+  #answerWrap{position:relative}
+  #answer{width:100%;background:var(--card);border:1.5px solid #3a3e50;border-radius:12px;color:var(--text);font-size:17px;padding:11px 46px 11px 14px;outline:none}
   #answer::-webkit-search-cancel-button,#answer::-webkit-search-decoration{-webkit-appearance:none;display:none}
   #answer{-webkit-appearance:none;appearance:none}
   #answer:focus{border-color:var(--accent)}
   #answer.correct{animation:flash .4s}
+  #answerClearBtn{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:9px;border:1.5px solid #ff4d4f;background:#3a1418;color:#ff6b6b;font-size:16px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+  #answerClearBtn:active{background:#ff4d4f;color:#fff}
   @keyframes flash{0%{border-color:#5dd88a;background:#2e4a3a}100%{border-color:var(--accent)}}
   .shead{font-size:14px;font-weight:700;color:var(--accent);padding:16px 12px 6px;display:flex;justify-content:space-between;align-items:baseline}
   .shead small{color:var(--sub);font-weight:400;font-size:11px}
@@ -119,7 +122,10 @@
       </div>
       <button id="menubtn">☰</button>
     </div>
-    <input id="answer" type="search" name="pokemon-answer" placeholder="포켓몬 이름 입력…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <div id="answerWrap">
+      <input id="answer" type="search" name="pokemon-answer" placeholder="포켓몬 이름 입력…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <button id="answerClearBtn" type="button" aria-label="입력 지우기">←</button>
+    </div>
   </div>
   <div id="sections"></div>
   <div id="helptext">· 두 번 누르기: 힌트 보기(한 글자씩 보여짐), · 길게 누르기: 이름 보기 / 감추기</div>
@@ -617,6 +623,12 @@ function bindAnswer(inp){
   inp.addEventListener("compositionstart",function(){clearGuard=false;if(clearGuardTimer){clearTimeout(clearGuardTimer);clearGuardTimer=null}});
 }
 bindAnswer($("answer"));
+$("answerClearBtn").addEventListener("click",function(){
+  var inp=$("answer");
+  inp.value="";
+  inp.classList.remove("correct");
+  inp.focus();
+});
 var lastTapCell=null,lastTapT=0;
 var LONG_PRESS_MS=1500;
 var pressTimer=null,longPressFired=false;
@@ -631,6 +643,7 @@ function doLongPress(cell){
   if(inp.value===tgt){
     inp.value="";
   }else{
+    if(!confirm("해당 칸의 포켓몬 이름을 공개할까요?"))return;
     inp.value=tgt;
     stats.longpress++;saveStats();
     checkInput();
