@@ -638,8 +638,21 @@ function cellFromEv(ev){
   return cell;
 }
 function doLongPress(cell){
-  if(!cell||!cell._e||cell.classList.contains("done"))return;
-  var inp=$("answer"),tgt=NAMES[cell._e[1]];
+  if(!cell||!cell._e)return;
+  var inp=$("answer"),tgt=NAMES[cell._e[1]],b=cell._e[1];
+  if(cell.classList.contains("done")){
+    found.delete(b);save();
+    (cellsByBase[b]||[]).forEach(function(c){
+      c.classList.remove("done");
+      c.style.background=cfg.typ?typeBg(c):"";
+      c._img.src=srcFor(c);
+      if(c._e[5].length>1)updateFI(c);
+    });
+    if(inp.value===tgt)inp.value="";
+    render2counts();
+    updateFillHighlight();
+    return;
+  }
   if(inp.value===tgt){
     inp.value="";
   }else{
