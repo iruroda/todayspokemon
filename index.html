@@ -92,9 +92,11 @@
   #helptext{font-size:10px;color:var(--sub);text-align:center;margin:10px auto 0;padding:0 16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   #greetmsg{display:none;margin:18px 0 0;font-size:13px;font-weight:600;color:var(--text)}
   #greetmsg.show{display:block}
-  #greetmsg.show + #authrow{margin-top:8px}
-  #authrow{display:flex;gap:8px;margin-top:18px}
-  #authrow .mbig{margin:0;flex:1;font-size:12px;padding:10px}
+  #greetmsg.hint{font-weight:500;color:var(--sub)}
+  #greetmsg.show + .mrow{margin-top:8px}
+  .mrow{display:flex;gap:8px;margin-top:18px}
+  .mrow + .mrow{margin-top:8px}
+  .mrow .mbig{margin:0;flex:1;height:38px;padding:0 10px;font-size:12px;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
   .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:40;align-items:center;justify-content:center;padding:24px}
   .modal .box{background:var(--card);border-radius:20px;padding:28px 24px;text-align:center;max-width:320px;width:100%}
   .modal h2{color:var(--accent);font-size:18px;margin-bottom:14px}
@@ -142,8 +144,8 @@
   <div class="msec" data-key="set"><h3>설정<span class="car">▾</span></h3><div class="chips" id="setchips"></div></div>
   <div class="msec" data-key="fill"><h3>채우기 순서<span class="car">▾</span></h3><div class="chips" id="fillchips"></div></div>
   <div id="greetmsg"></div>
-  <div id="authrow"><button class="mbig" id="loginBtn">로그인</button><button class="mbig" id="recordBtn">기록 보기</button></div>
-  <button class="mbig warn" id="resetbtn">처음부터 하기</button>
+  <div class="mrow"><button class="mbig" id="recordBtn">기록 보기</button><button class="mbig warn" id="resetbtn">처음부터 하기</button></div>
+  <div class="mrow"><button class="mbig" id="hubBtn">Pokélab 메인으로</button><button class="mbig" id="loginBtn">로그인</button></div>
 </div></div>
 <div id="overlay"><div class="box"><h2>🎉 축하합니다!</h2><p id="ovmsg"></p><button id="ovbtn">닫기</button></div></div>
 <div id="loginModal" class="modal"><div class="box">
@@ -738,8 +740,9 @@ function updateAuthUI(){
   $("loginBtn").textContent=curUser?"로그아웃":"로그인";
   var g=$("greetmsg");
   if(curUser){g.textContent=curUser+"님, 안녕하세요.";g.className="show";}
-  else{g.textContent="";g.className="";}
+  else{g.textContent="로그인하면 발견 기록을 저장할 수 있습니다.";g.className="show hint";}
 }
+$("hubBtn").onclick=function(){location.href="https://iruroda.github.io/pokelab"};
 $("loginBtn").onclick=function(){
   if(curUser){
     if(fbAuth)fbAuth.signOut();
