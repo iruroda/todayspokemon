@@ -751,34 +751,65 @@ $("loginBtn").onclick=function(){
     updateAuthUI();
   }else{
     $("loginId").value="";$("loginPw").value="";
+    $("loginSubmit").disabled=false;$("loginSubmit").textContent="로그인";
     $("loginModal").style.display="flex";
+    $("loginId").focus();
   }
 };
 $("loginCancel").onclick=function(){$("loginModal").style.display="none"};
 $("loginModal").onclick=function(e){if(e.target===$("loginModal"))$("loginModal").style.display="none"};
+
+// PC 환경: 팝업(모달)이 열려있을 때 ESC로 닫기, Enter로 확인 버튼 실행
+var MODAL_KEYS=[
+  {id:"loginModal",confirm:"loginSubmit",cancel:"loginCancel"}
+];
+document.addEventListener("keydown",function(e){
+  for(var i=0;i<MODAL_KEYS.length;i++){
+    var m=MODAL_KEYS[i];
+    var el=$(m.id);
+    if(el&&el.style.display==="flex"){
+      if(e.key==="Escape"){
+        e.preventDefault();
+        el.style.display="none";
+      }else if(e.key==="Enter"){
+        if(document.activeElement&&document.activeElement.id===m.cancel)return;
+        e.preventDefault();
+        var btn=$(m.confirm);
+        if(btn&&!btn.disabled)btn.click();
+      }
+      return;
+    }
+  }
+});
+
 $("loginSubmit").onclick=function(){
   var id=$("loginId").value.trim(),pw=$("loginPw").value;
-  if(!id||!pw){alert("아이디와 비밀번호를 입력하세요");return}
-  if(!fbAuth){alert("서버 연결이 안 돼 로그인할 수 없습니다");return}
-  if(pw.length<6){alert("비밀번호는 6자 이상이어야 합니다");return}
+  var btn=$("loginSubmit");
+  var showErr=function(text){
+    btn.disabled=true;btn.textContent=text;
+    setTimeout(function(){btn.disabled=false;btn.textContent="로그인"},1600);
+    updateAuthUI();
+  };
+  if(!id||!pw){showErr("아이디와 비밀번호를 입력하세요.");return}
+  if(!fbAuth){showErr("서버 연결이 안 돼 로그인할 수 없습니다.");return}
+  if(pw.length<6){showErr("비밀번호는 6자 이상이어야 합니다.");return}
   var email=idToEmail(id);
-  if(email.length>80){alert("아이디가 너무 깁니다");return}
-  var btn=$("loginSubmit");btn.disabled=true;btn.textContent="로그인 중…";
+  if(email.length>80){showErr("아이디가 너무 깁니다.");return}
+  btn.disabled=true;btn.textContent="로그인 중…";
   fbAuth.signInWithEmailAndPassword(email,pw)
     .then(function(cred){
       fbUid=cred.user.uid;
       curUser=id;localStorage.setItem("psq2curuser",id);
       $("loginModal").style.display="none";
+      btn.disabled=false;btn.textContent="로그인";
       return syncFromServer();
     })
     .catch(function(err){
-      var m="로그인에 실패했습니다";
-      if(err&&err.code==="auth/user-not-found")m="존재하지 않는 아이디입니다. 관리자에게 계정 생성을 요청하세요";
-      else if(err&&(err.code==="auth/invalid-credential"||err.code==="auth/wrong-password"))m="아이디 또는 비밀번호가 일치하지 않습니다";
-      else if(err&&err.code==="auth/network-request-failed")m="네트워크 연결을 확인하세요";
-      alert(m);
-    })
-    .then(function(){btn.disabled=false;btn.textContent="로그인";updateAuthUI()});
+      var m="로그인에 실패했습니다.";
+      if(err&&(err.code==="auth/user-not-found"||err.code==="auth/invalid-credential"||err.code==="auth/wrong-password"))m="계정 정보가 일치하지 않습니다.";
+      else if(err&&err.code==="auth/network-request-failed")m="네트워크 연결을 확인하세요.";
+      showErr(m);
+    });
 };
 function syncFromServer(){
   if(!fbUid||!fbDb)return Promise.resolve();
