@@ -89,10 +89,13 @@
   #wrap[data-cols="6"] .cell .nm{font-size:7px;height:10px}
   #wrap[data-cols="6"] .cell .fi,#wrap[data-cols="6"] .cell .dn{font-size:7px}
   #pad{height:120px}
-  #menu{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:20}
-  #mpanel{position:absolute;top:0;right:calc(max(0px, (100vw - 520px) / 2));width:min(320px,88vw);height:100%;background:#20232e;padding:0;overflow-y:auto;display:flex;flex-direction:column;overscroll-behavior:contain}
-  #mbody{padding:6px 16px 28px}
+  #menu{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:20;opacity:0;visibility:hidden;transition:opacity .18s ease,visibility 0s linear .18s}
+  #menu.on{opacity:1;visibility:visible;transition:opacity .18s ease}
+  #mpanel{position:fixed;top:0;right:calc(max(0px, (100vw - 520px) / 2));width:min(320px,88vw);height:100%;background:#20232e;padding:0;overflow-y:auto;display:flex;flex-direction:column;overscroll-behavior:contain;z-index:21;opacity:0;visibility:hidden;transform:scale(.96);transform-origin:top right;transition:opacity .15s ease,transform .15s ease,visibility 0s linear .15s}
+  #mpanel.on{opacity:1;visibility:visible;transform:scale(1);transition:opacity .15s ease,transform .15s ease}
+  #mbody{padding:0 16px 28px}
   .msec h3{font-size:12px;color:var(--sub);margin:18px 0 8px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;-webkit-user-select:none}
+  #mbody .msec:first-child h3{margin-top:10px}
   .msec h3 .car{font-size:10px;color:var(--sub);transition:transform .2s}
   .msec.collapsed h3{margin-bottom:0}
   .msec.collapsed .car{transform:rotate(-90deg)}
@@ -108,6 +111,7 @@
   #overlay p{font-size:15px;line-height:1.6}
   #overlay button{margin-top:20px;background:var(--accent);border:none;border-radius:12px;padding:12px 28px;font-size:15px;font-weight:700;color:#1a1c24;cursor:pointer}
   #helptext{font-size:10px;color:var(--sub);text-align:center;margin:10px auto 0;padding:0 16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #disclaimer{font-size:7.5px;line-height:1.5;color:var(--sub);text-align:center;margin:10px auto 0;padding:0 16px;opacity:.6}
   #greetmsg{display:none;margin:18px 0 0;font-size:13px;font-weight:600;color:var(--text)}
   #greetmsg.show{display:block}
   #greetmsg.hint{font-weight:500;color:var(--sub)}
@@ -151,11 +155,12 @@
     </div>
   </div>
   <div id="sections"></div>
-  <div id="helptext">· 두 번 누르기: 힌트 보기(한 글자씩 보여짐), · 길게 누르기: 이름 보기 / 감추기</div>
+  <div id="helptext">· 두 번 누르기: 힌트 보기(한 글자씩 보여짐), 길게 누르기: 이름 보기 / 감추기</div>
+  <div id="disclaimer">본 사이트는 팬이 만든 비공식 사이트로, 닌텐도, 게임프리크, 주식회사 포켓몬과는 어떠한 관계도 없습니다. Pokemon은 닌텐도 / Creatures Inc. / Game Freak Inc.의 상표입니다. 모든 게임 콘텐츠, 이미지, 상표는 각 권리자에게 귀속됩니다.</div>
   <div id="pad"></div>
 </div>
 <button id="menubtn" type="button" aria-label="메뉴 열기/닫기"><span></span><span></span><span></span></button>
-<div id="menu"><div id="mpanel">
+<div id="menu"></div><div id="mpanel">
   <div id="mtitle"><img id="ptimg" alt="">오늘의 포켓몬은 뭘까요</div>
   <div id="mbody">
   <div class="msec" data-key="dex"><h3>도감별<span class="car">▾</span></h3><div class="chips" id="dexchips"></div></div>
@@ -169,7 +174,7 @@
   <div class="mrow"><button class="mbig" id="recordBtn">기록 보기</button><button class="mbig warn" id="resetbtn">처음부터 하기</button></div>
   <div class="mrow"><button class="mbig" id="hubBtn">Pokélab 메인으로</button><button class="mbig" id="loginBtn">로그인</button></div>
   </div>
-</div></div>
+</div>
 <div id="overlay"><div class="box"><h2>🎉 축하합니다!</h2><p id="ovmsg"></p><button id="ovbtn">닫기</button></div></div>
 <div id="loginModal" class="modal"><div class="box">
   <h2 id="loginTitle">로그인</h2>
@@ -740,9 +745,9 @@ $("sections").addEventListener("click",function(ev){
 function alignPanel(){var wr=$("wrap").getBoundingClientRect();var mb=$("menubtn");mb.style.left=(wr.right-mb.offsetWidth-8)+"px";mb.style.right="auto";var mp=$("mpanel");if(mp.offsetWidth){mp.style.left=(wr.right-mp.offsetWidth)+"px";mp.style.right="auto"}}
 window.addEventListener("resize",alignPanel);
 alignPanel();
-function closeMenu(){$("menu").style.display="none";document.body.style.overflow="";$("menubtn").classList.remove("open")}
-function openMenu(){$("menu").style.display="block";document.body.style.overflow="hidden";alignPanel();$("menubtn").classList.add("open")}
-$("menubtn").onclick=function(){if($("menu").style.display==="block")closeMenu();else openMenu()};
+function closeMenu(){$("menu").classList.remove("on");$("mpanel").classList.remove("on");document.body.style.overflow="";$("menubtn").classList.remove("open")}
+function openMenu(){$("menu").classList.add("on");$("mpanel").classList.add("on");document.body.style.overflow="hidden";alignPanel();$("menubtn").classList.add("open")}
+$("menubtn").onclick=function(){if($("menu").classList.contains("on"))closeMenu();else openMenu()};
 $("menu").onclick=function(e){if(e.target===$("menu"))closeMenu()};
 Array.prototype.forEach.call(document.querySelectorAll("#mpanel .msec"),function(sec){
   var key=sec.getAttribute("data-key"),h=sec.querySelector("h3");
