@@ -6,7 +6,7 @@
 <title>오늘의 포켓몬은 뭘까요</title>
 <link id="favico" rel="icon" type="image/x-icon" href="favicon.ico">
 <style>
-  :root { --bg:#1a1c24; --card:#252834; --accent:#ffcb05; --text:#e8eaf0; --sub:#8a8fa3; }
+  :root { --bg:#1a1c24; --card:#252834; --accent:#ffcb05; --text:#fff; --sub:#8a8fa3; }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   body{background:var(--bg);color:var(--text);font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;overflow-x:hidden}
   @media (hover:hover) and (pointer:fine){
@@ -21,9 +21,9 @@
     html.scrolling,#mpanel.scrolling{scrollbar-color:rgba(232,234,240,.28) transparent}
   }
   #wrap{max-width:520px;margin:0 auto;min-height:100dvh}
-  #mtitle{position:sticky;top:0;z-index:2;flex:none;display:flex;align-items:center;gap:8px;font-size:17px;font-weight:800;padding:16px 36px 12px 16px;background:#20232e;border-bottom:1px solid #2e3242}
+  #mtitle{position:sticky;top:0;z-index:2;flex:none;display:flex;align-items:center;gap:8px;font-size:17px;font-weight:800;padding:16px 36px 12px 16px;background:var(--card)}
   #mtitle img{width:24px;height:24px}
-  #topbar{position:sticky;top:0;z-index:10;background:rgba(26,28,36,.97);backdrop-filter:blur(8px);padding:10px 12px 8px;border-bottom:1px solid #2e3242}
+  #topbar{position:sticky;top:0;z-index:10;background:rgba(26,28,36,.97);backdrop-filter:blur(8px);padding:10px 12px 8px;border-bottom:1px solid #3a3e50}
   #row1{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding-right:36px}
   #progresswrap{flex:1}
   #ptextrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
@@ -33,7 +33,7 @@
   #ptext #ptotal{font-size:12px}
   #typerow{display:flex;gap:2px;flex-wrap:nowrap;justify-content:flex-end;min-width:0;overflow:hidden}
   #typerow .tic{width:12px;height:12px;flex:none;object-fit:contain;visibility:hidden}
-  #pbar{height:6px;background:#2e3242;border-radius:3px;overflow:hidden;width:100%}
+  #pbar{height:6px;background:#3a3e50;border-radius:3px;overflow:hidden;width:100%}
   #pfill{height:100%;width:0%;background:var(--accent);border-radius:3px;transition:width .3s}
   #typerow .tic.on{visibility:visible}
   #menubtn{position:fixed;top:11px;right:calc(max(0px, (100vw - 520px) / 2) + 8px);z-index:35;width:34px;height:34px;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0;transition:transform .35s cubic-bezier(.4,0,.2,1)}
@@ -43,6 +43,7 @@
   #menubtn.open span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
   #answerWrap{position:relative}
   #answer{width:100%;background:var(--card);border:1.5px solid #3a3e50;border-radius:12px;color:var(--text);font-size:17px;padding:11px 40px 11px 14px;outline:none}
+  #answer::placeholder{color:var(--sub);opacity:1}
   #answer::-webkit-search-cancel-button,#answer::-webkit-search-decoration{-webkit-appearance:none;display:none}
   #answer{-webkit-appearance:none;appearance:none}
   #answer:focus{border-color:var(--accent)}
@@ -52,7 +53,7 @@
   #answerClearBtn span{position:absolute;width:14px;height:2px;border-radius:1px;background:var(--sub)}
   #answerClearBtn span:nth-child(1){transform:rotate(45deg)}
   #answerClearBtn span:nth-child(2){transform:rotate(-45deg)}
-  @keyframes flash{0%{border-color:#5dd88a;background:#2e4a3a}100%{border-color:var(--accent)}}
+  @keyframes flash{0%{border-color:#fff;background:#3a3e50}100%{border-color:var(--accent)}}
   .shead{font-size:14px;font-weight:700;color:var(--accent);padding:16px 12px 6px;display:flex;justify-content:space-between;align-items:baseline}
   .shead small{color:var(--sub);font-weight:400;font-size:11px}
   .dexver{margin-left:8px;display:inline-flex;gap:4px;vertical-align:1px}
@@ -91,7 +92,7 @@
   #pad{height:24px}
   #menu{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:20;opacity:0;visibility:hidden;transition:opacity .18s ease,visibility 0s linear .18s}
   #menu.on{opacity:1;visibility:visible;transition:opacity .18s ease}
-  #mpanel{position:fixed;top:0;right:calc(max(0px, (100vw - 520px) / 2));width:min(320px,88vw);height:100%;background:#20232e;padding:0;overflow-y:auto;display:flex;flex-direction:column;overscroll-behavior:contain;z-index:21;opacity:0;visibility:hidden;transform:scale(.96);transform-origin:top right;transition:opacity .15s ease,transform .15s ease,visibility 0s linear .15s}
+  #mpanel{position:fixed;top:0;right:calc(max(0px, (100vw - 520px) / 2));width:min(320px,88vw);height:100%;background:var(--card);padding:0;overflow-y:auto;display:flex;flex-direction:column;overscroll-behavior:contain;z-index:21;opacity:0;visibility:hidden;transform:scale(.96);transform-origin:top right;transition:opacity .15s ease,transform .15s ease,visibility 0s linear .15s}
   #mpanel.on{opacity:1;visibility:visible;transform:scale(1);transition:opacity .15s ease,transform .15s ease}
   #mbody{padding:0 16px 28px}
   .msec h3{font-size:12px;color:var(--sub);margin:18px 0 8px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;-webkit-user-select:none}
@@ -104,7 +105,7 @@
   .chip{background:var(--card);border:1px solid #3a3e50;color:var(--text);border-radius:16px;padding:6px 12px;font-size:12px;cursor:pointer}
   .chip.on{border-color:var(--accent);color:var(--accent)}
   .mbig{width:100%;background:var(--card);border:1px solid #3a3e50;color:var(--text);border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;margin:14px 0 0}
-  .mbig.warn{border-color:#4a3040;color:#d98a9a}
+  .mbig.warn{color:#d98a9a}
   #overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:30;align-items:center;justify-content:center;padding:24px}
   #overlay .box{background:var(--card);border-radius:20px;padding:32px 28px;text-align:center;max-width:320px;width:100%}
   #overlay h2{color:var(--accent);font-size:22px;margin-bottom:12px}
@@ -131,7 +132,7 @@
   .confirmBtns button{width:auto;flex:1;margin-top:0;border:1.5px solid transparent}
   .confirmBtns button.secondary{margin-top:0;border-color:#3a3e50}
   #recordList{max-height:50vh;overflow-y:auto;text-align:left;font-size:12px;color:var(--text);margin:0 0 10px}
-  #recordList .rec{padding:8px 4px;border-bottom:1px solid #2e3242}
+  #recordList .rec{padding:8px 4px;border-bottom:1px solid #3a3e50}
   #recordList .rec .t{color:var(--accent);font-weight:700;font-size:12px}
   #recordList .rec .s{color:var(--sub);font-size:11px;margin-top:2px}
   #recordList .empty{color:var(--sub);padding:16px 0;text-align:center}
@@ -302,7 +303,7 @@ cfg.fillOrder=(cfg.fillOrder===1||cfg.fillOrder===2)?cfg.fillOrder:0;
 cfg.collapsed=(cfg.collapsed&&typeof cfg.collapsed==="object")?cfg.collapsed:{};
 var selB=new Set(cfg.b||[]),selT=new Set(cfg.t||[]),selF=cfg.f||0;
 var tick=0;
-var BALL="data:image/svg+xml,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="33" fill="none" stroke="#555b70" stroke-width="9"/><path d="M17 50h22M61 50h22" stroke="#555b70" stroke-width="9" fill="none"/><circle cx="50" cy="50" r="12" fill="none" stroke="#555b70" stroke-width="8"/><circle cx="50" cy="50" r="4" fill="#555b70"/></svg>');
+var BALL="data:image/svg+xml,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="33" fill="none" stroke="#8a8fa3" stroke-width="9"/><path d="M17 50h22M61 50h22" stroke="#8a8fa3" stroke-width="9" fill="none"/><circle cx="50" cy="50" r="12" fill="none" stroke="#8a8fa3" stroke-width="8"/></svg>');
 var SUPRE=/[¹²³⁰-₟ᴬ-ᶿʰ-˿]/;
 (function(){
   var firstNS={},mergedSup={},res=[];
