@@ -846,11 +846,11 @@ $("loginSubmit").onclick=function(){
     setTimeout(function(){btn.disabled=false;btn.textContent="확인"},1600);
     updateAuthUI();
   };
-  if(!id||!pw){showErr("아이디와 비밀번호를 입력하세요.");return}
-  if(!fbAuth){showErr("서버 연결이 안 돼 로그인할 수 없습니다.");return}
-  if(pw.length<6){showErr("비밀번호는 6자 이상이어야 합니다.");return}
+  if(!id||!pw){showErr("계정 정보가 일치하지 않습니다.");return}
+  if(!fbAuth){showErr("로그인에 실패했습니다.");return}
+  if(pw.length<6){showErr("계정 정보가 일치하지 않습니다.");return}
   var email=idToEmail(id);
-  if(email.length>80){showErr("아이디가 너무 깁니다.");return}
+  if(email.length>80){showErr("계정 정보가 일치하지 않습니다.");return}
   btn.disabled=true;btn.textContent="확인 중…";
   fbAuth.signInWithEmailAndPassword(email,pw)
     .then(function(cred){
@@ -863,7 +863,6 @@ $("loginSubmit").onclick=function(){
     .catch(function(err){
       var m="로그인에 실패했습니다.";
       if(err&&(err.code==="auth/user-not-found"||err.code==="auth/invalid-credential"||err.code==="auth/wrong-password"))m="계정 정보가 일치하지 않습니다.";
-      else if(err&&err.code==="auth/network-request-failed")m="네트워크 연결을 확인하세요.";
       showErr(m);
     });
 };
