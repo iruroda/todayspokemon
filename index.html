@@ -8,7 +8,8 @@
 <style>
   :root { --bg:#1a1c24; --card:#252834; --accent:#ffcb05; --text:#fff; --sub:#8a8fa3; }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  body{background:var(--bg);color:var(--text);font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;overflow-x:hidden}
+  html{overscroll-behavior-y:none}
+  body{background:var(--bg);color:var(--text);font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;overflow-x:hidden;overscroll-behavior-y:none}
   @media (hover:hover) and (pointer:fine){
     html{scrollbar-gutter:stable}
     #mpanel{scrollbar-gutter:stable}
@@ -43,7 +44,7 @@
   #menubtn.open span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
   #answerWrap{position:relative}
   #answer{width:100%;background:var(--card);border:1.5px solid #3a3e50;border-radius:12px;color:var(--text);font-size:17px;padding:11px 40px 11px 14px;outline:none}
-  #answer::placeholder{color:var(--sub);opacity:1}
+  #answer::placeholder{color:#6b7086;opacity:1}
   #answer::-webkit-search-cancel-button,#answer::-webkit-search-decoration{-webkit-appearance:none;display:none}
   #answer{-webkit-appearance:none;appearance:none}
   #answer:focus{border-color:var(--accent)}
