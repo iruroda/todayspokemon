@@ -44,7 +44,7 @@
   #menubtn.open span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
   #answerWrap{position:relative}
   #answer{width:100%;background:var(--card);border:1.5px solid #3a3e50;border-radius:12px;color:var(--text);font-size:17px;padding:11px 40px 11px 14px;outline:none}
-  #answer::placeholder{color:#6b7086;opacity:1}
+  #answer::placeholder{color:#3a3e50;opacity:1}
   #answer::-webkit-search-cancel-button,#answer::-webkit-search-decoration{-webkit-appearance:none;display:none}
   #answer{-webkit-appearance:none;appearance:none}
   #answer:focus{border-color:var(--accent)}
@@ -60,7 +60,7 @@
   .dexver{margin-left:8px;display:inline-flex;gap:4px;vertical-align:1px}
   .dvbtn{background:var(--card);border:1px solid #3a3e50;color:var(--sub);border-radius:10px;padding:2px 8px;font-size:11px;font-weight:400;cursor:pointer;line-height:1.3}
   .dvbtn.on{border-color:var(--accent);color:var(--accent);font-weight:700}
-  .novar{margin:18px 14px;padding:14px 12px;border:2px solid #e53e4e;background:#ffd9e4;color:#b3122a;border-radius:10px;font-size:13px;font-weight:600;text-align:center;line-height:1.5}
+  .novar{margin:18px 14px;padding:14px 12px;border:2px solid #b3122a;background:#ffd9e4;color:#b3122a;border-radius:10px;font-size:13px;font-weight:600;text-align:center;line-height:1.5}
   .sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:0 10px}
   .cell{position:relative;background:var(--card);border-radius:10px;padding:4px 2px 2px;text-align:center;user-select:none;-webkit-user-select:none}
   .cell .sp{display:block;width:100%;max-width:72px;aspect-ratio:68/56;visibility:hidden;margin:0 auto}
@@ -127,11 +127,17 @@
   .modal input{width:100%;background:#1a1c24;border:1.5px solid #3a3e50;border-radius:10px;color:var(--text);font-size:15px;padding:10px 12px;margin-bottom:10px;outline:none}
   .modal input:focus{border-color:var(--accent)}
   .modal p{font-size:14px;color:var(--text);line-height:1.55;margin:0 0 18px}
+  #confirmMsg.danger{color:#d98a9a}
   .modal button{margin-top:6px;background:var(--accent);border:none;border-radius:12px;padding:10px 24px;font-size:14px;font-weight:700;color:#1a1c24;cursor:pointer;width:100%}
   .modal button.secondary{background:transparent;color:var(--sub);margin-top:8px}
   .confirmBtns{display:flex;gap:10px}
   .confirmBtns button{width:auto;flex:1;margin-top:0;border:1.5px solid transparent}
   .confirmBtns button.secondary{margin-top:0;border-color:#3a3e50}
+  #confirmOk.hold{position:relative;overflow:hidden;background:transparent;color:var(--sub);border-color:#3a3e50}
+  #confirmOk.hold .lbl{position:relative;z-index:1}
+  #confirmOk.hold::before{content:"";position:absolute;inset:0;width:0;background:var(--accent)}
+  #confirmOk.hold.filling::before{width:100%;transition:width 3s linear}
+  #confirmOk.hold.filling{color:#1a1c24}
   #recordList{max-height:50vh;overflow-y:auto;text-align:left;font-size:12px;color:var(--text);margin:0 0 10px}
   #recordList .rec{padding:8px 4px;border-bottom:1px solid #3a3e50}
   #recordList .rec .t{color:var(--accent);font-weight:700;font-size:12px}
@@ -191,8 +197,9 @@
   <button class="secondary" id="recordClose">닫기</button>
 </div></div>
 <div id="confirmModal" class="modal"><div class="box">
+  <h2 id="confirmTitle" hidden></h2>
   <p id="confirmMsg"></p>
-  <div class="confirmBtns"><button id="confirmOk">확인</button><button class="secondary" id="confirmCancel">취소</button></div>
+  <div class="confirmBtns"><button id="confirmOk"><span class="lbl">확인</span></button><button class="secondary" id="confirmCancel">취소</button></div>
 </div></div>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
@@ -798,17 +805,43 @@ $("loginCancel").onclick=function(){$("loginModal").style.display="none"};
 $("loginModal").onclick=function(e){if(e.target===$("loginModal"))$("loginModal").style.display="none"};
 
 // 공용 확인창(브라우저 기본 confirm() 대체) — 로그인 창과 같은 스킨
-function showConfirm(msg,onOk){
+function showConfirm(msg,onOk,danger,title,hold){
   $("confirmMsg").textContent=msg;
+  $("confirmMsg").classList.toggle("danger",!!danger);
+  if(title){$("confirmTitle").textContent=title;$("confirmTitle").hidden=false}else{$("confirmTitle").hidden=true}
+  $("confirmOk").classList.toggle("hold",!!hold);
+  $("confirmOk").classList.remove("filling");
   $("confirmModal").style.display="flex";
+  var holdTimer=null;
   function cleanup(){
     $("confirmModal").style.display="none";
+    clearTimeout(holdTimer);
+    $("confirmOk").classList.remove("filling");
     $("confirmOk").removeEventListener("click",okHandler);
+    $("confirmOk").removeEventListener("pointerdown",startHold);
+    $("confirmOk").removeEventListener("pointerup",stopHold);
+    $("confirmOk").removeEventListener("pointerleave",stopHold);
+    $("confirmOk").removeEventListener("pointercancel",stopHold);
     $("confirmCancel").removeEventListener("click",cancelHandler);
   }
   function okHandler(){cleanup();onOk&&onOk()}
   function cancelHandler(){cleanup()}
-  $("confirmOk").addEventListener("click",okHandler);
+  function startHold(){
+    $("confirmOk").classList.add("filling");
+    holdTimer=setTimeout(function(){cleanup();onOk&&onOk()},3000);
+  }
+  function stopHold(){
+    clearTimeout(holdTimer);
+    $("confirmOk").classList.remove("filling");
+  }
+  if(hold){
+    $("confirmOk").addEventListener("pointerdown",startHold);
+    $("confirmOk").addEventListener("pointerup",stopHold);
+    $("confirmOk").addEventListener("pointerleave",stopHold);
+    $("confirmOk").addEventListener("pointercancel",stopHold);
+  }else{
+    $("confirmOk").addEventListener("click",okHandler);
+  }
   $("confirmCancel").addEventListener("click",cancelHandler);
 }
 $("confirmModal").onclick=function(e){if(e.target===$("confirmModal")){$("confirmCancel").click()}};
@@ -909,7 +942,7 @@ $("resetbtn").onclick=function(){
     stats.sil=false;stats.typ=false;stats.hint=0;stats.longpress=0;saveStats();
     saveCfg();applyCols();applySil();applyTyp();applyVariants();refreshImgs();refreshBgs();
     render();buildMenu();closeMenu();
-  });
+  },true,"처음부터 하기",true);
 };
 function chip(label,on,fn,parent){
   var c=document.createElement("button");c.className="chip"+(on?" on":"");c.textContent=label;c.onclick=fn;parent.appendChild(c);
