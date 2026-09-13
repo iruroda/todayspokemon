@@ -133,7 +133,7 @@
   .confirmBtns{display:flex;gap:10px}
   .confirmBtns button{width:auto;flex:1;margin-top:0;border:1.5px solid transparent}
   .confirmBtns button.secondary{margin-top:0;border-color:#3a3e50}
-  #confirmOk.hold{position:relative;overflow:hidden;background:transparent;color:var(--sub);border-color:#3a3e50}
+  #confirmOk.hold{position:relative;overflow:hidden;background:transparent;color:var(--sub);border-color:#3a3e50;-webkit-user-select:none;user-select:none;-webkit-user-drag:none;-webkit-touch-callout:none;touch-action:none}
   #confirmOk.hold .lbl{position:relative;z-index:1}
   #confirmOk.hold::before{content:"";position:absolute;inset:0;width:0;background:var(--accent)}
   #confirmOk.hold.filling::before{width:100%;transition:width 3s linear}
@@ -820,13 +820,14 @@ function showConfirm(msg,onOk,danger,title,hold){
     $("confirmOk").removeEventListener("click",okHandler);
     $("confirmOk").removeEventListener("pointerdown",startHold);
     $("confirmOk").removeEventListener("pointerup",stopHold);
-    $("confirmOk").removeEventListener("pointerleave",stopHold);
     $("confirmOk").removeEventListener("pointercancel",stopHold);
     $("confirmCancel").removeEventListener("click",cancelHandler);
   }
   function okHandler(){cleanup();onOk&&onOk()}
   function cancelHandler(){cleanup()}
-  function startHold(){
+  function startHold(e){
+    try{e.target.setPointerCapture(e.pointerId)}catch(err){}
+    e.preventDefault();
     $("confirmOk").classList.add("filling");
     holdTimer=setTimeout(function(){cleanup();onOk&&onOk()},3000);
   }
@@ -837,7 +838,6 @@ function showConfirm(msg,onOk,danger,title,hold){
   if(hold){
     $("confirmOk").addEventListener("pointerdown",startHold);
     $("confirmOk").addEventListener("pointerup",stopHold);
-    $("confirmOk").addEventListener("pointerleave",stopHold);
     $("confirmOk").addEventListener("pointercancel",stopHold);
   }else{
     $("confirmOk").addEventListener("click",okHandler);
