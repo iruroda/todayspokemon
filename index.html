@@ -48,13 +48,13 @@
   #answer::-webkit-search-cancel-button,#answer::-webkit-search-decoration{-webkit-appearance:none;display:none}
   #answer{-webkit-appearance:none;appearance:none}
   #answer:focus{border-color:var(--accent)}
-  #answer.correct{animation:wave 1s ease}
+  #answer.correct{animation:wave .8s ease}
   #answerClearBtn{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:28px;height:28px;background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}
   #answerClearBtn:active{opacity:.55}
   #answerClearBtn span{position:absolute;width:14px;height:2px;border-radius:1px;background:var(--sub)}
   #answerClearBtn span:nth-child(1){transform:rotate(45deg)}
   #answerClearBtn span:nth-child(2){transform:rotate(-45deg)}
-  @keyframes wave{0%{background-position:50% 50%,50% 50%,50% 50%,50% 50%}45%{background-position:50% -130%,50% 230%,50% 50%,50% 50%}100%{background-position:50% -130%,50% 230%,50% -130%,50% 230%}}
+  @keyframes wave{0%{background-position:50% 50%,50% 50%,50% 50%,50% 50%}10%{background-position:50% 14%,50% 86%,50% 20%,50% 80%}20%{background-position:50% -22%,50% 122%,50% -10%,50% 110%}30%{background-position:50% -58%,50% 158%,50% -40%,50% 140%}40%{background-position:50% -94%,50% 194%,50% -70%,50% 170%}50%{background-position:50% -130%,50% 230%,50% -100%,50% 200%}60%{background-position:50% -130%,50% 230%,50% -130%,50% 230%}100%{background-position:50% -130%,50% 230%,50% -130%,50% 230%}}
   .shead{font-size:14px;font-weight:700;color:var(--accent);padding:16px 12px 6px;display:flex;justify-content:space-between;align-items:baseline}
   .shead small{color:var(--sub);font-weight:400;font-size:11px}
   .dexver{margin-left:8px;display:inline-flex;gap:4px;vertical-align:1px}
