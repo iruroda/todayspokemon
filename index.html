@@ -43,18 +43,18 @@
   #menubtn.open span:nth-child(2){opacity:0;transform:scaleX(0)}
   #menubtn.open span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
   #answerWrap{position:relative}
-  #answer{width:100%;background-color:var(--card);background-image:linear-gradient(to bottom,transparent,#8a8fa3 50%,transparent),linear-gradient(to bottom,transparent,#3a3e50 50%,transparent);background-repeat:no-repeat,no-repeat;background-position:center,center;background-size:100% 0%,100% 0%;border:1.5px solid #3a3e50;border-radius:12px;color:var(--text);font-size:17px;padding:11px 40px 11px 14px;outline:none}
+  #answer{width:100%;background-color:var(--card);background-image:linear-gradient(to bottom,transparent,#8a8fa3 50%,transparent),linear-gradient(to bottom,transparent,#8a8fa3 50%,transparent),linear-gradient(to bottom,transparent,#3a3e50 50%,transparent),linear-gradient(to bottom,transparent,#3a3e50 50%,transparent);background-repeat:no-repeat,no-repeat,no-repeat,no-repeat;background-size:100% 55%,100% 55%,100% 55%,100% 55%;background-position:50% -130%,50% 230%,50% -130%,50% 230%;border:1.5px solid #3a3e50;border-radius:12px;color:var(--text);font-size:17px;padding:11px 40px 11px 14px;outline:none}
   #answer::placeholder{color:#3a3e50;opacity:1}
   #answer::-webkit-search-cancel-button,#answer::-webkit-search-decoration{-webkit-appearance:none;display:none}
   #answer{-webkit-appearance:none;appearance:none}
   #answer:focus{border-color:var(--accent)}
-  #answer.correct{animation:wave .9s ease}
+  #answer.correct{animation:wave 1s ease}
   #answerClearBtn{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:28px;height:28px;background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}
   #answerClearBtn:active{opacity:.55}
   #answerClearBtn span{position:absolute;width:14px;height:2px;border-radius:1px;background:var(--sub)}
   #answerClearBtn span:nth-child(1){transform:rotate(45deg)}
   #answerClearBtn span:nth-child(2){transform:rotate(-45deg)}
-  @keyframes wave{0%{background-size:100% 0%,100% 0%}38%{background-size:100% 200%,100% 0%}58%{background-size:100% 0%,100% 200%}100%{background-size:100% 0%,100% 0%}}
+  @keyframes wave{0%{background-position:50% 50%,50% 50%,50% 50%,50% 50%}45%{background-position:50% -130%,50% 230%,50% 50%,50% 50%}100%{background-position:50% -130%,50% 230%,50% -130%,50% 230%}}
   .shead{font-size:14px;font-weight:700;color:var(--accent);padding:16px 12px 6px;display:flex;justify-content:space-between;align-items:baseline}
   .shead small{color:var(--sub);font-weight:400;font-size:11px}
   .dexver{margin-left:8px;display:inline-flex;gap:4px;vertical-align:1px}
