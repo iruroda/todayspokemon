@@ -110,10 +110,10 @@
   .mbig{width:100%;background:var(--card);border:1px solid #3a3e50;color:var(--text);border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;margin:14px 0 0}
   .mbig.warn{color:#d98a9a}
   #overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:30;align-items:center;justify-content:center;padding:24px}
-  #overlay .box{background:var(--card);border-radius:20px;padding:32px 28px;text-align:center;max-width:320px;width:100%}
+  #overlay .box{background:var(--card);border-radius:20px;padding:32px 28px;text-align:center;max-width:320px;width:100%;position:relative}
   #overlay h2{color:var(--accent);font-size:22px;margin-bottom:12px}
   #overlay p{font-size:15px;line-height:1.6}
-  #overlay button{margin-top:20px;background:var(--accent);border:none;border-radius:12px;padding:12px 28px;font-size:15px;font-weight:700;color:#1a1c24;cursor:pointer}
+  #overlay button{margin-top:16px;background:var(--accent);border:none;border-radius:12px;padding:10px 24px;font-size:14px;font-weight:700;color:#1a1c24;cursor:pointer;width:100%}
   #helptext{font-size:10px;color:var(--sub);text-align:center;margin:10px auto 0;padding:0 16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;user-select:none;-webkit-user-select:none}
   #disclaimer{font-size:7.5px;line-height:1.5;color:var(--sub);text-align:center;margin:10px auto 0;padding:0 16px;opacity:.6;user-select:none;-webkit-user-select:none}
   #greetmsg{display:none;margin:18px 0 0;font-size:13px;font-weight:600;color:var(--text)}
@@ -124,7 +124,7 @@
   .mrow + .mrow{margin-top:8px}
   .mrow .mbig{margin:0;flex:1;height:38px;padding:0 10px;font-size:12px;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
   .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:40;align-items:center;justify-content:center;padding:24px}
-  .modal .box{background:var(--card);border-radius:20px;padding:28px 24px;text-align:center;max-width:320px;width:100%}
+  .modal .box{background:var(--card);border-radius:20px;padding:28px 24px;text-align:center;max-width:320px;width:100%;position:relative}
   .modal h2{color:var(--accent);font-size:18px;margin-bottom:14px}
   .modal input{width:100%;background:#1a1c24;border:1.5px solid #3a3e50;border-radius:10px;color:var(--text);font-size:15px;padding:10px 12px;margin-bottom:10px;outline:none}
   .modal input:focus{border-color:var(--accent)}
@@ -132,6 +132,12 @@
   #confirmMsg.danger{color:#d98a9a}
   .modal button{margin-top:6px;background:var(--accent);border:none;border-radius:12px;padding:10px 24px;font-size:14px;font-weight:700;color:#1a1c24;cursor:pointer;width:100%}
   .modal button.secondary{background:transparent;color:var(--sub);margin-top:8px}
+  .modal .mclose,#overlay .mclose{position:absolute;top:10px;right:10px;width:28px;height:28px;background:none;border:none;cursor:pointer;padding:0;margin:0;display:flex;align-items:center;justify-content:center}
+  .mclose:active{opacity:.55}
+  .mclose span{position:absolute;width:14px;height:2px;border-radius:1px;background:var(--sub)}
+  .mclose span:nth-child(1){transform:rotate(45deg)}
+  .mclose span:nth-child(2){transform:rotate(-45deg)}
+  #loginCancel,#recordClose,#confirmCancel{display:none}
   .confirmBtns{display:flex;gap:10px}
   .confirmBtns button{width:auto;flex:1;margin-top:0;border:1.5px solid transparent}
   .confirmBtns button.secondary{margin-top:0;border-color:#3a3e50}
@@ -185,8 +191,9 @@
   <div class="mrow"><button class="mbig" id="hubBtn">Pokélab 메인으로</button><button class="mbig" id="loginBtn">로그인</button></div>
   </div>
 </div>
-<div id="overlay"><div class="box"><h2>🎉 축하합니다!</h2><p id="ovmsg"></p><button id="ovbtn">닫기</button></div></div>
+<div id="overlay"><div class="box"><button class="mclose" type="button" id="ovX" aria-label="닫기"><span></span><span></span></button><h2>축하합니다!</h2><p id="ovmsg"></p><button id="ovbtn">확인</button></div></div>
 <div id="loginModal" class="modal"><div class="box">
+  <button class="mclose" type="button" id="loginX" aria-label="닫기"><span></span><span></span></button>
   <h2 id="loginTitle">로그인</h2>
   <input id="loginId" type="text" name="username" placeholder="아이디" autocomplete="username">
   <input id="loginPw" type="password" name="password" placeholder="비밀번호" autocomplete="current-password">
@@ -194,11 +201,13 @@
   <button class="secondary" id="loginCancel">닫기</button>
 </div></div>
 <div id="recordModal" class="modal"><div class="box">
+  <button class="mclose" type="button" id="recordX" aria-label="닫기"><span></span><span></span></button>
   <h2>기록 보기</h2>
   <div id="recordList"></div>
   <button class="secondary" id="recordClose">닫기</button>
 </div></div>
 <div id="confirmModal" class="modal"><div class="box">
+  <button class="mclose" type="button" id="confirmX" aria-label="닫기"><span></span><span></span></button>
   <h2 id="confirmTitle" hidden></h2>
   <p id="confirmMsg"></p>
   <div class="confirmBtns"><button id="confirmOk"><span class="lbl">확인</span></button><button class="secondary" id="confirmCancel">취소</button></div>
@@ -637,7 +646,7 @@ function checkInput(){
       if(stats.records.length>20)stats.records.length=20;
       stats.sil=false;stats.typ=false;stats.hint=0;stats.longpress=0;
       saveStats();
-      $("ovmsg").textContent="당신은 모든 포켓몬을 발견했습니다!";$("overlay").style.display="flex";
+      $("ovmsg").textContent="모든 포켓몬을 발견했습니다.";$("overlay").style.display="flex";
     }
   }
 }
@@ -849,6 +858,10 @@ function showConfirm(msg,onOk,danger,title,hold){
 $("confirmModal").onclick=function(e){if(e.target===$("confirmModal")){$("confirmCancel").click()}};
 
 // PC 환경: 팝업(모달)이 열려있을 때 ESC로 닫기, Enter로 확인 버튼 실행
+$("ovX").onclick=function(){$("ovbtn").click()};
+$("loginX").onclick=function(){$("loginCancel").click()};
+$("recordX").onclick=function(){$("recordClose").click()};
+$("confirmX").onclick=function(){$("confirmCancel").click()};
 var MODAL_KEYS=[
   {id:"loginModal",confirm:"loginSubmit",cancel:"loginCancel"},
   {id:"recordModal",confirm:"recordClose",cancel:"recordClose"},
