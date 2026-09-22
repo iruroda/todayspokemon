@@ -791,7 +791,7 @@ function updateAuthUI(){
   if(curUser){g.textContent=curUser+"님, 안녕하세요.";g.className="show";}
   else{g.textContent="로그인하면 발견 기록을 저장할 수 있습니다.";g.className="show hint";}
 }
-$("hubBtn").onclick=function(){location.href="https://iruroda.github.io/pokelab"};
+$("hubBtn").onclick=function(){top.location.href="https://iruroda.github.io/pokelab"};
 $("loginBtn").onclick=function(){
   if(curUser){
     if(fbAuth)fbAuth.signOut();
