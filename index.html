@@ -139,7 +139,7 @@
   .mclose span{position:absolute;width:14px;height:2px;border-radius:1px;background:var(--sub)}
   .mclose span:nth-child(1){transform:rotate(45deg)}
   .mclose span:nth-child(2){transform:rotate(-45deg)}
-  #loginCancel,#recordClose,#confirmCancel{display:none}
+  #recordClose,#confirmCancel{display:none}
   .confirmBtns{display:flex;gap:10px}
   .confirmBtns button{width:auto;flex:1;margin-top:0;border:1.5px solid transparent}
   .confirmBtns button.secondary{margin-top:0;border-color:#3a3e50}
@@ -197,14 +197,6 @@
   </div>
 </div>
 <div id="overlay"><div class="box"><button class="mclose" type="button" id="ovX" aria-label="닫기"><span></span><span></span></button><h2>축하합니다!</h2><p id="ovmsg"></p><button id="ovbtn">확인</button></div></div>
-<div id="loginModal" class="modal"><div class="box">
-  <button class="mclose" type="button" id="loginX" aria-label="닫기"><span></span><span></span></button>
-  <h2 id="loginTitle">로그인</h2>
-  <input id="loginId" type="text" name="username" placeholder="아이디" autocomplete="username">
-  <input id="loginPw" type="password" name="password" placeholder="비밀번호" autocomplete="current-password">
-  <button id="loginSubmit">확인</button>
-  <button class="secondary" id="loginCancel">닫기</button>
-</div></div>
 <div id="recordModal" class="modal"><div class="box">
   <button class="mclose" type="button" id="recordX" aria-label="닫기"><span></span><span></span></button>
   <h2>기록 보기</h2>
@@ -295,11 +287,6 @@ try{
   firebase.initializeApp({apiKey:"AIzaSyA1qlkS_vNnAEMhyeJxH0EHRxYrFeJXZDk",authDomain:"todayspokemon-ef9c0.firebaseapp.com",projectId:"todayspokemon-ef9c0",storageBucket:"todayspokemon-ef9c0.firebasestorage.app",messagingSenderId:"69457831977",appId:"1:69457831977:web:faeee4ba343a6c9b931438"});
   fbAuth=firebase.auth();fbDb=firebase.firestore();
 }catch(e){console.warn("Firebase 초기화 실패",e)}
-function idToEmail(id){
-  var hex="",b=unescape(encodeURIComponent(id));
-  for(var i=0;i<b.length;i++){var h=b.charCodeAt(i).toString(16);hex+=(h.length<2?"0":"")+h}
-  return "u"+hex+"@todayspokemon.app";
-}
 var curUser=localStorage.getItem("psq2curuser")||null;
 function statsKey(){return "psq2stats_"+(curUser||"guest")}
 function loadStats(){
@@ -801,7 +788,7 @@ function renderRecords(){
 function updateAuthUI(){
   $("loginBtn").textContent=curUser?"로그아웃":"로그인";
   var g=$("greetmsg");
-  if(curUser){g.textContent=curUser==="admin"?"관리자로 로그인 중입니다.":curUser+"님, 안녕하세요.";g.className="show";}
+  if(curUser){g.textContent=curUser+"님, 안녕하세요.";g.className="show";}
   else{g.textContent="로그인하면 발견 기록을 저장할 수 있습니다.";g.className="show hint";}
 }
 $("hubBtn").onclick=function(){location.href="https://iruroda.github.io/pokelab"};
@@ -812,14 +799,16 @@ $("loginBtn").onclick=function(){
     stats=loadStats();
     updateAuthUI();
   }else{
-    $("loginId").value="";$("loginPw").value="";
-    $("loginSubmit").disabled=false;$("loginSubmit").textContent="확인";
-    $("loginModal").style.display="flex";
-    $("loginId").focus();
+    if(!fbAuth)return;
+    var provider=new firebase.auth.GoogleAuthProvider();
+    fbAuth.signInWithPopup(provider).then(function(cred){
+      fbUid=cred.user.uid;
+      curUser=cred.user.displayName||cred.user.email||"사용자";
+      localStorage.setItem("psq2curuser",curUser);
+      return syncFromServer();
+    }).catch(function(e){console.warn("구글 로그인 실패",e)});
   }
 };
-$("loginCancel").onclick=function(){$("loginModal").style.display="none"};
-$("loginModal").onclick=function(e){if(e.target===$("loginModal"))$("loginModal").style.display="none"};
 
 // 공용 확인창(브라우저 기본 confirm() 대체) — 로그인 창과 같은 스킨
 function showConfirm(msg,onOk,danger,title,hold){
@@ -865,11 +854,9 @@ $("confirmModal").onclick=function(e){if(e.target===$("confirmModal")){$("confir
 
 // PC 환경: 팝업(모달)이 열려있을 때 ESC로 닫기, Enter로 확인 버튼 실행
 $("ovX").onclick=function(){$("ovbtn").click()};
-$("loginX").onclick=function(){$("loginCancel").click()};
 $("recordX").onclick=function(){$("recordClose").click()};
 $("confirmX").onclick=function(){$("confirmCancel").click()};
 var MODAL_KEYS=[
-  {id:"loginModal",confirm:"loginSubmit",cancel:"loginCancel"},
   {id:"recordModal",confirm:"recordClose",cancel:"recordClose"},
   {id:"overlay",confirm:"ovbtn",cancel:"ovbtn"},
   {id:"confirmModal",confirm:"confirmOk",cancel:"confirmCancel"}
@@ -893,34 +880,6 @@ document.addEventListener("keydown",function(e){
   }
 });
 
-$("loginSubmit").onclick=function(){
-  var id=$("loginId").value.trim(),pw=$("loginPw").value;
-  var btn=$("loginSubmit");
-  var showErr=function(text){
-    btn.disabled=true;btn.textContent=text;
-    setTimeout(function(){btn.disabled=false;btn.textContent="확인"},1600);
-    updateAuthUI();
-  };
-  if(!id||!pw){showErr("계정 정보가 일치하지 않습니다.");return}
-  if(!fbAuth){showErr("로그인에 실패했습니다.");return}
-  if(pw.length<6){showErr("계정 정보가 일치하지 않습니다.");return}
-  var email=idToEmail(id);
-  if(email.length>80){showErr("계정 정보가 일치하지 않습니다.");return}
-  btn.disabled=true;btn.textContent="확인 중…";
-  fbAuth.signInWithEmailAndPassword(email,pw)
-    .then(function(cred){
-      fbUid=cred.user.uid;
-      curUser=id;localStorage.setItem("psq2curuser",id);
-      $("loginModal").style.display="none";
-      btn.disabled=false;btn.textContent="확인";
-      return syncFromServer();
-    })
-    .catch(function(err){
-      var m="로그인에 실패했습니다.";
-      if(err&&(err.code==="auth/user-not-found"||err.code==="auth/invalid-credential"||err.code==="auth/wrong-password"))m="계정 정보가 일치하지 않습니다.";
-      showErr(m);
-    });
-};
 function syncFromServer(){
   if(!fbUid||!fbDb)return Promise.resolve();
   return fbDb.collection("users").doc(fbUid).get().then(function(snap){
