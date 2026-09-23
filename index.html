@@ -9,7 +9,7 @@
   :root { --bg:#1a1c24; --card:#252834; --accent:#ffcb05; --text:#fff; --sub:#8a8fa3; }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html{overscroll-behavior-y:none}
-  body{background:var(--bg);color:var(--text);font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;overflow-x:hidden;overscroll-behavior-y:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR","Malgun Gothic",sans-serif;overflow-x:hidden;overscroll-behavior-y:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
   input,textarea{user-select:text;-webkit-user-select:text;-webkit-touch-callout:default}
   img{-webkit-user-drag:none}
   @media (hover:hover) and (pointer:fine){
@@ -24,7 +24,7 @@
     html.scrolling,#mpanel.scrolling{scrollbar-color:rgba(232,234,240,.28) transparent}
   }
   #wrap{max-width:520px;margin:0 auto;min-height:100dvh}
-  #mtitle{position:sticky;top:0;z-index:2;flex:none;display:flex;align-items:center;gap:8px;font-size:17px;font-weight:800;padding:16px 36px 12px 16px;background:var(--card)}
+  #mtitle{position:sticky;top:0;z-index:2;flex:none;display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;padding:16px 36px 12px 16px;background:var(--card)}
   #mtitle img{width:24px;height:24px}
   #topbar{position:sticky;top:0;z-index:10;background:rgba(26,28,36,.97);backdrop-filter:blur(8px);padding:10px 12px 8px}
   #row1{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding-right:36px}
@@ -100,20 +100,24 @@
   #mpanel{position:fixed;top:0;right:calc(max(0px, (100vw - 520px) / 2));width:min(320px,88vw);height:100%;background:var(--card);padding:0;overflow-y:auto;display:flex;flex-direction:column;overscroll-behavior:contain;z-index:21;opacity:0;visibility:hidden;transform:scale(.96);transform-origin:top right;transition:opacity .15s ease,transform .15s ease,visibility 0s linear .15s}
   #mpanel.on{opacity:1;visibility:visible;transform:scale(1);transition:opacity .15s ease,transform .15s ease}
   #mbody{padding:0 16px 28px}
-  .msec h3{font-size:12px;color:var(--sub);margin:18px 0 8px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;-webkit-user-select:none}
-  #mbody .msec:first-child h3{margin-top:10px}
+  .msec h3{font-size:12px;color:var(--sub);margin:18px 0 8px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;-webkit-user-select:none}
+  .mgroup{margin-top:22px}
+  .mgroup:first-child{margin-top:0}
+  .mgrouptitle{font-size:13.5px;font-weight:800;color:var(--accent);margin:0;padding-top:16px;border-top:1px solid #3a3e50}
+  .mgroup:first-child .mgrouptitle{border-top:none;padding-top:0}
+  .mgroup .msec:first-child h3{margin-top:10px}
   .msec h3 .car{font-size:10px;color:var(--sub);transition:transform .2s}
   .msec.collapsed h3{margin-bottom:0}
   .msec.collapsed .car{transform:rotate(-90deg)}
   .msec.collapsed .chips{display:none}
   .chips{display:flex;flex-wrap:wrap;gap:6px}
-  .chip{background:var(--card);border:1px solid #3a3e50;color:var(--text);border-radius:16px;padding:6px 12px;font-size:12px;cursor:pointer}
+  .chip{background:var(--card);border:1px solid #3a3e50;color:var(--text);border-radius:999px;padding:6px 12px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer}
   .chip.on{border-color:var(--accent);color:var(--accent)}
   .mbig{width:100%;background:var(--card);border:1px solid #3a3e50;color:var(--text);border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;margin:14px 0 0}
   .mbig.warn{color:#d98a9a}
   #overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:30;align-items:center;justify-content:center;padding:24px}
-  #overlay .box{background:var(--card);border-radius:20px;padding:32px 28px;text-align:center;max-width:320px;width:100%;position:relative}
-  #overlay h2{color:var(--accent);font-size:22px;margin-bottom:12px}
+  #overlay .box{background:var(--card);border-radius:16px;padding:32px 28px;text-align:center;max-width:320px;width:100%;position:relative}
+  #overlay h2{color:var(--accent);font-size:15px;font-weight:800;margin-bottom:12px}
   #overlay p{font-size:15px;line-height:1.6}
   #overlay button{margin-top:16px;background:var(--accent);border:none;border-radius:12px;padding:10px 24px;font-size:14px;font-weight:700;color:#1a1c24;cursor:pointer;width:100%}
   #helptext{font-size:10px;color:var(--sub);text-align:center;margin:10px auto 0;padding:0 16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;user-select:none;-webkit-user-select:none}
@@ -126,8 +130,8 @@
   .mrow + .mrow{margin-top:8px}
   .mrow .mbig{margin:0;flex:1;height:38px;padding:0 10px;font-size:12px;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
   .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:40;align-items:center;justify-content:center;padding:24px}
-  .modal .box{background:var(--card);border-radius:20px;padding:28px 24px;text-align:center;max-width:320px;width:100%;position:relative}
-  .modal h2{color:var(--accent);font-size:18px;margin-bottom:14px}
+  .modal .box{background:var(--card);border-radius:16px;padding:28px 24px;text-align:center;max-width:320px;width:100%;position:relative}
+  .modal h2{color:var(--accent);font-size:15px;font-weight:800;margin-bottom:14px}
   .modal input{width:100%;background:#1a1c24;border:1.5px solid #3a3e50;border-radius:10px;color:var(--text);font-size:15px;padding:10px 12px;margin-bottom:10px;outline:none}
   .modal input:focus{border-color:var(--accent)}
   .modal p{font-size:14px;color:var(--text);line-height:1.55;margin:0 0 18px}
@@ -176,7 +180,7 @@
     </div>
   </div>
   <div id="sections"></div>
-  <div id="helptext">· 두 번 누르기: 힌트 보기(한 글자씩 보여짐), 길게 누르기: 이름 보기 / 감추기</div>
+  <div id="helptext">두 번 누르기: 한 글자씩 보기, 길게 누르기: 이름 보기/감추기</div>
   <div id="disclaimer">본 사이트는 팬이 만든 비공식 사이트로, 닌텐도, 게임프리크, 주식회사 포켓몬과는 어떠한 관계도 없습니다. Pokemon은 닌텐도 / Creatures Inc. / Game Freak Inc.의 상표입니다. 모든 게임 콘텐츠, 이미지, 상표는 각 권리자에게 귀속됩니다.</div>
   <div id="pad"></div>
 </div>
@@ -184,13 +188,20 @@
 <div id="menu"></div><div id="mpanel">
   <div id="mtitle"><img id="ptimg" alt="">오늘의 포켓몬은 뭘까요</div>
   <div id="mbody">
+  <div class="mgroup"><h2 class="mgrouptitle">범위 설정</h2>
   <div class="msec" data-key="dex"><h3>도감별<span class="car">▾</span></h3><div class="chips" id="dexchips"></div></div>
   <div class="msec" data-key="box"><h3>세대별<span class="car">▾</span></h3><div class="chips" id="boxchips"></div></div>
   <div class="msec" data-key="typ"><h3>타입별<span class="car">▾</span></h3><div class="chips" id="typechips"></div></div>
+  </div>
+  <div class="mgroup"><h2 class="mgrouptitle">챌린지 설정</h2>
+  <div class="msec" data-key="fill"><h3>챌린지 순서<span class="car">▾</span></h3><div class="chips" id="fillchips"></div></div>
+  <div class="msec" data-key="hint"><h3>힌트<span class="car">▾</span></h3><div class="chips" id="hintchips"></div></div>
+  </div>
+  <div class="mgroup"><h2 class="mgrouptitle">보기 설정</h2>
   <div class="msec" data-key="fnd"><h3>발견/미발견<span class="car">▾</span></h3><div class="chips" id="fndchips"></div></div>
-  <div class="msec" data-key="view"><h3>그리드 설정<span class="car">▾</span></h3><div class="chips" id="viewchips"></div></div>
-  <div class="msec" data-key="set"><h3>보기 설정<span class="car">▾</span></h3><div class="chips" id="setchips"></div></div>
-  <div class="msec" data-key="fill"><h3>채우기 순서<span class="car">▾</span></h3><div class="chips" id="fillchips"></div></div>
+  <div class="msec" data-key="view"><h3>칸 수<span class="car">▾</span></h3><div class="chips" id="viewchips"></div></div>
+  <div class="msec" data-key="varset"><h3>다른 모습<span class="car">▾</span></h3><div class="chips" id="varchips"></div></div>
+  </div>
   <div id="greetmsg"></div>
   <div class="mrow"><button class="mbig" id="recordBtn">기록 보기</button><button class="mbig warn" id="resetbtn">처음부터 하기</button></div>
   <div class="mrow"><button class="mbig" id="hubBtn">Pokélab 메인으로</button><button class="mbig" id="loginBtn">로그인</button></div>
@@ -948,19 +959,20 @@ function buildMenu(){
   ["설정 안 함","오름차순","무작위"].forEach(function(lbl,fi){
     chip(lbl,cfg.fillOrder===fi,function(){cfg.fillOrder=fi;saveCfg();fillTarget=null;updateFillHighlight();buildMenu()},flc);
   });
-  var sc=$("setchips");sc.innerHTML="";
+  var hc=$("hintchips");hc.innerHTML="";
   chip("실루엣 보기",cfg.sil,function(){
-    if(!cfg.sil&&!stats.sil){showConfirm("실루엣 보기 설정은 기록에 영향을 줍니다.",function(){cfg.sil=!cfg.sil;saveCfg();applySil();buildMenu()});return;}
+    if(!cfg.sil&&!stats.sil){showConfirm("실루엣 보기를 켜면 기록에 저장됩니다.",function(){cfg.sil=!cfg.sil;saveCfg();applySil();buildMenu()},false,"실루엣 보기");return;}
     cfg.sil=!cfg.sil;saveCfg();applySil();buildMenu();
-  },sc);
+  },hc);
   chip("타입 미리 보기",cfg.typ,function(){
-    if(!cfg.typ&&!stats.typ){showConfirm("타입 미리 보기 설정은 기록에 영향을 줍니다.",function(){cfg.typ=!cfg.typ;saveCfg();applyTyp();buildMenu()});return;}
+    if(!cfg.typ&&!stats.typ){showConfirm("타입 미리 보기를 켜면 기록에 저장됩니다.",function(){cfg.typ=!cfg.typ;saveCfg();applyTyp();buildMenu()},false,"타입 미리 보기");return;}
     cfg.typ=!cfg.typ;saveCfg();applyTyp();buildMenu();
-  },sc);
-  chip("모습 자동 전환",cfg.fc,function(){cfg.fc=!cfg.fc;saveCfg();refreshImgs();refreshBgs();buildMenu()},sc);
-  chip("거다이맥스 따로 보기",cfg.gmax,function(){cfg.gmax=!cfg.gmax;saveCfg();applyVariants();render();buildMenu()},sc);
-  chip("리전폼 따로 보기",cfg.regional,function(){cfg.regional=!cfg.regional;saveCfg();applyVariants();render();buildMenu()},sc);
-  chip("메가진화 따로 보기",cfg.mega,function(){cfg.mega=!cfg.mega;saveCfg();applyVariants();render();buildMenu()},sc);
+  },hc);
+  var vc=$("varchips");vc.innerHTML="";
+  chip("모습 자동 전환",cfg.fc,function(){cfg.fc=!cfg.fc;saveCfg();refreshImgs();refreshBgs();buildMenu()},vc);
+  chip("거다이맥스 따로 보기",cfg.gmax,function(){cfg.gmax=!cfg.gmax;saveCfg();applyVariants();render();buildMenu()},vc);
+  chip("리전폼 따로 보기",cfg.regional,function(){cfg.regional=!cfg.regional;saveCfg();applyVariants();render();buildMenu()},vc);
+  chip("메가진화 따로 보기",cfg.mega,function(){cfg.mega=!cfg.mega;saveCfg();applyVariants();render();buildMenu()},vc);
   var dc=$("dexchips");dc.innerHTML="";
   DEXDEF.forEach(function(d,di){
     if(di===7||di===8)return;
