@@ -25,6 +25,13 @@
   }
   #wrap{max-width:520px;margin:0 auto;min-height:100dvh}
   #mtitle{position:sticky;top:0;z-index:2;flex:none;display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;padding:16px 0 8px 0;background:var(--card)}
+  .info-btn{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;flex-shrink:0;color:var(--sub);background:none;border:none;cursor:pointer;padding:0}
+  .info-btn svg{width:20px;height:20px;display:block;pointer-events:none}
+  .info-btn:active{color:var(--accent);transform:scale(0.9)}
+  #infoBody{font-size:15px;color:var(--text);line-height:1.6;text-align:left;margin:0}
+  #infoBody .ibrow{display:flex;margin-top:8px}
+  #infoBody .ibrow:first-child{margin-top:0}
+  #infoBody .idash{flex-shrink:0;width:13px}
   #mtitle img{width:24px;height:24px}
   #topbar{position:sticky;top:0;z-index:10;background:rgba(26,28,36,.97);backdrop-filter:blur(8px);padding:10px 12px 8px}
   #row1{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding-right:36px}
@@ -175,7 +182,7 @@
 </div>
 <button id="menubtn" type="button" aria-label="메뉴 열기/닫기"><span></span><span></span><span></span></button>
 <div id="menu"></div><div id="mpanel">
-  <div id="mtitle"><img id="ptimg" alt="">오늘의 포켓몬은 뭘까요</div>
+  <div id="mtitle"><img id="ptimg" alt="">오늘의 포켓몬은 뭘까요<span class="info-btn" id="infoBtn" role="button" tabindex="0" aria-label="설명 보기"><svg viewBox="0 0 24 24"><path d="M 9.82 17.82 L 9.82 20.61 L 13.78 20.61 L 13.78 17.82 Z M 9.58 4.16 L 8.08 4.89 L 7.07 5.82 L 6.34 7.27 L 6.22 8.77 L 9.86 8.81 L 9.94 7.76 L 10.71 6.87 L 12.16 6.55 L 13.29 7.03 L 13.82 7.80 L 13.70 8.85 L 13.01 9.70 L 11.31 10.91 L 10.34 12.00 L 9.98 13.05 L 9.98 15.39 L 13.70 15.39 L 13.82 12.85 L 14.34 12.20 L 15.92 10.99 L 16.97 9.78 L 17.41 8.61 L 17.29 6.91 L 16.93 6.10 L 16.00 5.13 L 14.51 4.28 L 12.32 3.88 Z M 9.90 0.12 L 6.95 1.01 L 5.37 1.86 L 3.47 3.39 L 1.74 5.49 L 0.89 7.07 L 0.04 9.82 L 0.00 13.98 L 1.49 18.14 L 3.31 20.48 L 5.29 22.10 L 9.05 23.72 L 10.83 24.00 L 13.74 23.92 L 18.10 22.34 L 20.28 20.65 L 21.70 18.99 L 22.91 16.89 L 23.60 14.87 L 23.88 13.05 L 23.80 10.18 L 22.99 7.35 L 21.98 5.41 L 20.48 3.56 L 18.51 1.94 L 14.67 0.28 L 12.77 0.00 Z M 11.23 1.09 L 14.75 1.45 L 17.37 2.55 L 18.75 3.52 L 21.21 6.30 L 22.46 9.21 L 22.79 11.19 L 22.42 14.95 L 21.33 17.54 L 20.40 18.83 L 17.41 21.45 L 14.83 22.55 L 12.73 22.91 L 9.09 22.59 L 7.11 21.82 L 5.01 20.48 L 2.42 17.49 L 1.33 14.91 L 0.97 12.65 L 1.09 10.22 L 1.90 7.56 L 4.12 4.32 L 7.35 2.06 L 9.01 1.45 Z" fill="currentColor" fill-rule="evenodd"/></svg></span></div>
   <div id="mbody">
   <div class="mgroup"><h2 class="mgrouptitle">범위 설정</h2>
   <div class="msec" data-key="dex"><h3>도감별<span class="car">▾</span></h3><div class="chips" id="dexchips"></div></div>
@@ -197,6 +204,11 @@
   </div>
 </div>
 <div id="overlay"><div class="box"><button class="mclose" type="button" id="ovX" aria-label="닫기"><span></span><span></span></button><h2>축하합니다!</h2><p id="ovmsg"></p><button id="ovbtn">확인</button></div></div>
+<div id="infoModal" class="modal"><div class="box">
+  <button class="mclose" type="button" id="infoX" aria-label="닫기"><span></span><span></span></button>
+  <h2>오늘의 포켓몬은 뭘까요</h2>
+  <div id="infoBody"></div>
+</div></div>
 <div id="recordModal" class="modal"><div class="box">
   <button class="mclose" type="button" id="recordX" aria-label="닫기"><span></span><span></span></button>
   <h2>기록 보기</h2>
@@ -857,6 +869,7 @@ $("ovX").onclick=function(){$("ovbtn").click()};
 $("recordX").onclick=function(){$("recordClose").click()};
 $("confirmX").onclick=function(){$("confirmCancel").click()};
 var MODAL_KEYS=[
+  {id:"infoModal",confirm:"infoX",cancel:"infoX"},
   {id:"recordModal",confirm:"recordClose",cancel:"recordClose"},
   {id:"overlay",confirm:"ovbtn",cancel:"ovbtn"},
   {id:"confirmModal",confirm:"confirmOk",cancel:"confirmCancel"}
@@ -903,6 +916,10 @@ function syncFromServer(){
     updateAuthUI();
   }).catch(function(e){console.warn("서버 동기화 실패",e);stats=loadStats()});
 }
+var INFO_BODY=["포켓몬의 이름을 맞혀서 도감을 완성하는 웹사이트입니다.","설정에서는 원하는 도감, 세대나 타입을 고를 수도 있습니다.","포켓몬의 실루엣이나 타입을 보이게 할 수도 있지만, 이는 기록에 저장됩니다.","각 칸을 두 번 눌러 아직 밝혀지지 않은 포켓몬의 이름을 한 글자씩 볼 수 있으며, 길게 눌러 이름을 공개할 수 있습니다."];
+$("infoBtn").onclick=function(){$("infoBody").innerHTML=INFO_BODY.map(function(t){return "<div class=\"ibrow\"><span class=\"idash\">-</span><span>"+t+"</span></div>"}).join("");$("infoModal").style.display="flex"};
+$("infoX").onclick=function(){$("infoModal").style.display="none"};
+$("infoModal").onclick=function(e){if(e.target===$("infoModal"))$("infoModal").style.display="none"};
 $("recordBtn").onclick=function(){renderRecords();$("recordModal").style.display="flex"};
 $("recordClose").onclick=function(){$("recordModal").style.display="none"};
 $("recordModal").onclick=function(e){if(e.target===$("recordModal"))$("recordModal").style.display="none"};
